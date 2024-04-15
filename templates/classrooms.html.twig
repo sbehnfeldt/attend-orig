@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Attend | Classrooms{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="js/classrooms.js"></script>
+{% endblock %}
+
+
+{% block main %}
+    <h1>Classrooms</h1>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#classrooms-tab">Classrooms</a></li>
+            <li><a href="#teachers">Teachers</a></li>
+        </ul>
+
+        <section id="classrooms-tab">
+            <h2>Classrooms</h2>
+            <table class="display compact">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Label</th>
+                    <th>Order</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="row">
+                <div class="col-xs-6 record-buttons"></div>
+                <div class="col-xs-6 table-buttons"><span class="pull-right"></span></div>
+
+            </div>
+
+            <div id="classroom-props-dlg" title="Add/Edit Classroom">
+                <form>
+                    <p class="update-tips"></p>
+                    <input class="hidden" name="Id">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Classroom Name</label>
+                            <input type="text" name="Label" class="required">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Order</label>
+                            <input type="number" name="Ordering">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="teachers">
+            <h2>Teachers</h2>
+        </section>
+    </div>
+{% endblock %}

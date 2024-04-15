@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Attend | Attendance{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="js/attendance.js"></script>
+{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+    <style>
+        a.pdf {
+            color: green;
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#attendance-tab">Attendance</a></li>
+            <li><a href="#signin-tab">Sign-In</a></li>
+        </ul>
+
+        <!-- Attendance Tab -->
+        <section id="attendance-tab">
+
+            <header class="page-header">
+                <h2>Attendance</h2>
+                <div class="controls">
+                    Week Of: <input type="text" name="week-of" value="{{ weekOf.format( 'm/d/Y') }}"/>
+                    <a class="pdf" id="pdf-attendance" href="pdf.php?attendance&week={{ weekOf.format( 'm/d/Y') }}"
+                       target="_blank">PDF</a>
+                </div>
+            </header>
+
+            <section class="attendance-page-schedules">
+                {% for classroom in classrooms %}
+                    <h3>{{ classroom.label }}</h3>
+
+                    <table class="attendance-table table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Mon<br/>{{ getDate(weekOf, 0) }}</th>
+                            <th>Tue<br/>{{ getDate(weekOf, 1) }}</th>
+                            <th>Wed<br/>{{ getDate(weekOf, 2) }}</th>
+                            <th>Thu<br/>{{ getDate(weekOf, 3) }}</th>
+                            <th>Fri<br/>{{ getDate(weekOf, 4) }}</th>
+                            <th>Summary</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in classroom.getStudents %}
+                            {% set notes = {'FD' : 0, 'HD' : 0, 'HDL' : 0 } %}
+                            <tr>
+                                <td>{{ student.getFamilyName }}, {{ student.getFirstName }}</td>
+                                <td>{{ student.writeSchedule( weekOf, 0 ) }}</td>
+                                <td>{{ student.writeSchedule( weekOf, 1 ) }}</td>
+                                <td>{{ student.writeSchedule( weekOf, 2 ) }}</td>
+                                <td>{{ student.writeSchedule( weekOf, 3 ) }}</td>
+                                <td>{{ student.writeSchedule( weekOf, 4 ) }}</td>
+                                <td>{{ student.writeSummary }}</td>
+
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                    </ul>
+
+                {% endfor %}
+            </section>
+        </section>
+
+        <section id="signin-tab">
+            <header class="page-header">
+                <h2>Sign In</h2>
+                <form action="">
+                    <div class="controls">
+                        Week Of: <input type="text" name="week-of" value="{{ weekOf.format( 'm/d/Y') }}"/>
+                        <div class="options row">
+                            <div class="col-xs-12 col-xs-3">
+                            <div>Print Options</div>
+                            <div>Dark Days</div>
+                            <div><input type="checkbox" name="dark[]" value="0"> Monday</div>
+                            <div><input type="checkbox" name="dark[]" value="1"> Tuesday</div>
+                            <div><input type="checkbox" name="dark[]" value="2"> Wednesday</div>
+                            <div><input type="checkbox" name="dark[]" value="3"> Thursday</div>
+                            <div><input type="checkbox" name="dark[]" value="4"> Friday</div>
+                        </div>
+                        </div>
+                        <div>
+                            <button name="pdf">PDF</button>
+                            <button name="options">Options</button>
+                        </div>
+                    </div>
+                </form>
+            </header>
+
+            <section class="attendance-page-signin">
+                {% for classroom in classrooms %}
+                    <h3>{{ classroom.label }}</h3>
+
+                    <table class="signin-table table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Mon<br/>{{ getDate(weekOf, 0) }}</th>
+                            <th>Tue<br/>{{ getDate(weekOf, 1) }}</th>
+                            <th>Wed<br/>{{ getDate(weekOf, 2) }}</th>
+                            <th>Thu<br/>{{ getDate(weekOf, 3) }}</th>
+                            <th>Fri<br/>{{ getDate(weekOf, 4) }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in classroom.getStudents %}
+                            {% set notes = {'FD' : 0, 'HD' : 0, 'HDL' : 0 } %}
+                            <tr>
+                                <td>{{ student.getFamilyName }}, {{ student.getFirstName }}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+            </section>
+        </section>
+    </div>
+{% endblock %}
+

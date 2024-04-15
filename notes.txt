@@ -1,0 +1,15 @@
+; Generate the schema.xml
+vendor\bin\propel reverse --schema-name=attend --database-name=attend --namespace=attend "mysql:host=localhost;dbname=attend;user=attend;password=attend"
+; TODO: Change the value of the phpName attribute of every table element to singular.
+; TODO: Correct value of namespace attributes in database and table elements, as necessary
+
+; Generate the schema map from schema xml
+cls && vendor\bin\propel sql:build --config-dir=generated-reversed-database --schema-dir=generated-reversed-database --output-dir=generated-reversed-database --overwrite
+
+
+cls && vendor\bin\propel help model:build
+cls && vendor\bin\propel model:build --config-dir=generated-reversed-database --schema-dir=generated-reversed-database --output-dir=classes/Attend/Database
+
+
+cls && vendor\bin\propel help convert
+cls && vendor\bin\propel convert --config-dir=generated-reversed-database --output-dir=lib

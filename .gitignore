@@ -1,0 +1,8 @@
+/.idea/
+/vendor/
+public/info.php
+/config.ini
+/public/.well-known/
+/backup.sh
+/public/upgradeDb.php
+/public/robots.txt

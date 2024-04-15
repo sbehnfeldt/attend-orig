@@ -1,0 +1,82 @@
+@media print {
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    body, article {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav {
+        display: none;
+    }
+
+    header.page-header {
+        display: none;
+    }
+
+    table {
+        font: 10pt sans-serif;
+        page-break-inside: auto;
+    }
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    div.controls {
+        display: none;
+    }
+
+    #attendance-page div.col-lg-2 {
+        display: none;
+    }
+
+    #attendance-page p.classroom {}
+
+    #attendance-page p.classroom span {
+        display: inline-block;
+        width: 40%;
+    }
+
+    #attendance-page div.panel {
+        page-break-after: always;
+    }
+
+    #attendance-page div.panel:last-of-type {
+        page-break-after: avoid;
+    }
+
+    #attendance-page .attendance-page-schedules {
+        margin-left: 50px;
+    }
+
+    #attendance-page .attendance-page-schedules .panel table.attendance-schedule tbody tr {
+        line-height: 200%;
+    }
+
+    #attendance-page td.absent,
+    #signin-page td.absent {
+        background-color: #9d9d9d !important;
+    }
+
+    #signin-page .signin-page-contents table {
+        page-break-after: always;
+    }
+
+    #signin-page .signin-page-contents table:last-of-type {
+        page-break-after: avoid;
+    }
+
+    #signin-page .signin-page-contents table tr {
+        line-height: 200%;
+    }
+
+    #signin-page .signin-page-contents table th {
+        background-color: #eeeeee !important;
+    }
+
+}

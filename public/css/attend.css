@@ -1,0 +1,150 @@
+body {
+    padding-top: 70px;
+    margin-bottom: 50px;
+}
+
+button {
+    border: 2px double #494949;
+    padding: 3px 6px 3px 6px;
+    border-radius: 10px;
+    font-size: smaller;
+    color: #494949;
+    background-image: linear-gradient(#fff 0%, #B7f84B 100%);
+}
+
+button.disabled {
+    background-image: linear-gradient(#fff 0%, #aaa 100%);
+}
+
+button.disabled span {
+    color: #aaa;
+}
+
+.attendance-page-signin table th:not(:first-of-type),
+.attendance-page-schedules table th:not(:first-of-type) {
+    text-align: center;
+}
+.hidden {
+    display: none;
+}
+
+.ui-dialog {
+    display: none;
+}
+
+.ui-dialog hr {
+    border-top: 3px solid #aaa;
+}
+
+.ui-dialog div.row {
+    margin-bottom: 20px;
+}
+
+.ui-dialog input[type=text],
+.ui-dialog input[type=number],
+.ui-dialog select {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+    background-image: linear-gradient(#fff 0%, #c7f85B 100%);
+}
+
+/* Remove the blue border around the input with the focus; instead, indicate focus with the same styling
+ as the buttons have.  (Might be a good candidate for  LESS/SASS) */
+.ui-dialog button:focus,
+.ui-dialog input:focus,
+.ui-dialog select:focus {
+    outline-style: none;
+    box-shadow: none;
+    background-image: linear-gradient(#fff 0%, #67f80B 100%);
+}
+
+.ui-dialog input.modified,
+.ui-dialog select.modified {
+    background-color: lightgoldenrodyellow;
+    background-image: none;
+}
+
+.ui-dialog .required.missing {
+    background-color: pink;
+    background-image: none;
+    color: red;
+}
+
+.ui-dialog table {
+    width: 100%;
+}
+
+.ui-dialog table td:not(:first-of-type) {
+    border: 1px solid #888;
+}
+
+.ui-dialog table td input[type=checkbox] {
+    text-align: center;
+    width: 100%;
+}
+
+.ui-dialog table button {
+    width: 100%;
+}
+
+.dark {
+    background-color: #777;
+}
+
+form div.options {
+    display: none;
+    padding: 5px;
+}
+
+form div.options div.col-xs-12,
+form div.options div.col-md-3 {
+    border: 1px solid #222222;
+}
+
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99;
+
+    display: none;
+    width: 100%;
+    height: 100%;
+
+    opacity: .7;
+    background-color: #fff;
+    text-align: center;
+    vertical-align: center;
+
+}
+
+#loading-image {
+    position: relative;
+    top: 50%;
+    z-index: 100;
+    display: block;
+    margin: 0 auto;
+
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid blue;
+    border-bottom: 16px solid blue;
+    border-radius: 50%;
+
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#tabs {
+    display: none;
+}

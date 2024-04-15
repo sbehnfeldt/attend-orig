@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Attend | Attendance{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="js/index.js"></script>
+{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+    <style>
+        a.pdf {
+            color: green;
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#attendance-tab">Attendance</a></li>
+            <li><a href="#signin-tab">Sign-In</a></li>
+        </ul>
+
+        <!-- Attendance Tab -->
+        <section id="attendance-tab">
+
+            <header class="page-header">
+                <h2>Attendance</h2>
+                <div class="controls">
+                    Week Of: <input type="text" name="week-of"/>
+                    <a class="pdf" id="pdf-attendance" href="pdf.php?attendance" target="_blank">PDF</a>
+                </div>
+            </header>
+
+            <section class="attendance-page-schedules"></section>
+        </section>
+
+        <section id="signin-tab">
+            <header class="page-header">
+                <h2>Sign In</h2>
+                <div class="controls">
+                    Week Of: <input type="text" name="week-of"/>
+                    <a class="pdf" id="pdf-signin" href="pdf.php?signin" target="_blank">PDF</a>
+                </div>
+            </header>
+
+            <section class="attendance-page-signin"></section>
+        </section>
+    </div>
+{% endblock %}
+

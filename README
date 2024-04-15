@@ -1,0 +1,9 @@
+Attend Web-Based attendance tracking application
+
+v1.0.1: Bug Fix
+* T1: Newly-enrolled students now show up properly in class-filtered contexts without requiring a page refresh.
+
+v1.0.0: Initial Release
+* Enroll students
+* Determine schedules
+* Print sign-in and attendance sheets
