@@ -2,7 +2,15 @@
 namespace flapjack\attend;
 
 
+use flapjack\attend\database\Classroom;
 use flapjack\attend\database\ClassroomQuery;
+use flapjack\attend\database\Schedule;
+use flapjack\attend\database\ScheduleQuery;
+use flapjack\attend\database\Student;
+use flapjack\attend\database\StudentQuery;
+use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Propel;
+
 
 class PropelEngine implements IDatabaseEngine
 {
@@ -17,10 +25,10 @@ class PropelEngine implements IDatabaseEngine
         $user     = $config[ 'uname' ];
         $password = $config[ 'pword' ];
 
-        $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+        $serviceContainer = Propel::getServiceContainer();
         $serviceContainer->checkVersion(2);
         $serviceContainer->setAdapterClass('attend', 'mysql');
-        $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle('attend');
+        $manager = new ConnectionManagerSingle('attend');
         $manager->setConfiguration(array(
             'classname'   => 'Propel\\Runtime\\Connection\\ConnectionWrapper',
             'dsn'         => "mysql:host=$host;dbname=$dbname",
@@ -62,7 +70,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function getClassroomById(int $id) : array
     {
-        $query    = new \Attend\Database\ClassroomQuery();
+        $query    = new ClassroomQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return [];
@@ -82,7 +90,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function postClassroom(array $body) : array
     {
-        $resource = new \Attend\Database\Classroom();
+        $resource = new Classroom();
         $resource->setLabel($body[ 'Label' ]);
         $resource->setOrdering($body[ 'Ordering' ]);
         $resource->save();
@@ -92,7 +100,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function putClassroomById(int $id, array $body) : array
     {
-        $query    = new \Attend\Database\ClassroomQuery();
+        $query    = new ClassroomQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return [];
@@ -107,7 +115,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function deleteClassroomById(int $id) : int
     {
-        $query    = new \Attend\Database\ClassroomQuery();
+        $query    = new ClassroomQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return 0;
@@ -119,18 +127,15 @@ class PropelEngine implements IDatabaseEngine
 
     public function getStudentById(int $id): ?array
     {
-        $query    = new \Attend\Database\StudentQuery();
+        $query    = new StudentQuery();
         $resource = $query->findPk($id);
-        if (null === $resource) {
-            return null;
-        }
 
-        return $resource->toArray();
+        return $resource?->toArray();
     }
 
     public function getStudents() : array
     {
-        $query    = new \Attend\Database\StudentQuery();
+        $query    = new StudentQuery();
         $resource = $query->find();
 
         return $resource->toArray();
@@ -139,7 +144,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function postStudent(array $body) : array
     {
-        $resource = new \Attend\Database\Student();
+        $resource = new Student();
         $resource->setFamilyName($body[ 'FamilyName' ]);
         $resource->setFirstName($body[ 'FirstName' ]);
         $resource->setEnrolled($body[ 'Enrolled' ]);
@@ -152,7 +157,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function putStudentById(int $id, array $body) : ?array
     {
-        $query    = new \Attend\Database\StudentQuery();
+        $query    = new StudentQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return null;
@@ -169,7 +174,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function deleteStudentById(int $id) : ?int
     {
-        $query    = new \Attend\Database\StudentQuery();
+        $query    = new StudentQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return null;
@@ -181,18 +186,15 @@ class PropelEngine implements IDatabaseEngine
 
     public function getScheduleById(int $id) : ?array
     {
-        $query    = new \Attend\Database\ScheduleQuery();
+        $query    = new ScheduleQuery();
         $resource = $query->findPk($id);
-        if (null === $resource) {
-            return null;
-        }
 
-        return $resource->toArray();
+        return $resource?->toArray();
     }
 
     public function getSchedules() : array
     {
-        $query    = new \Attend\Database\ScheduleQuery();
+        $query    = new ScheduleQuery();
         $resource = $query->find();
 
         return $resource->toArray();
@@ -200,7 +202,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function postSchedule(array $body) : array
     {
-        $resource = new \Attend\Database\Schedule();
+        $resource = new Schedule();
         $resource->setStartDate($body[ 'StartDate' ]);
         $resource->setSchedule($body[ 'Schedule' ]);
         $resource->setStudentId($body[ 'StudentId' ]);
@@ -211,7 +213,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function putScheduleById(int $id, array $body) : ?array
     {
-        $query    = new \Attend\Database\ScheduleQuery();
+        $query    = new ScheduleQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return null;
@@ -228,7 +230,7 @@ class PropelEngine implements IDatabaseEngine
 
     public function deleteScheduleById(int $id) : ?int
     {
-        $query    = new \Attend\Database\ScheduleQuery();
+        $query    = new ScheduleQuery();
         $resource = $query->findPk($id);
         if (null === $resource) {
             return null;
