@@ -2,6 +2,8 @@
 namespace Attend;
 
 
+use flapjack\attend\IDatabaseEngine;
+
 class AttendPdf extends \FPDF
 {
 

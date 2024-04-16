@@ -2,12 +2,11 @@
 namespace flapjack\attend;
 
 
-use Attend\PropelEngine\PropelEngine;
 use flapjack\attend\database\ClassroomQuery;
-use Slim\Container;
-use Slim\App;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\App;
+use Slim\Container;
 use Twig\TwigFunction;
 
 

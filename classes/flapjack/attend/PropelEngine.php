@@ -1,8 +1,7 @@
 <?php
-namespace Attend\PropelEngine;
+namespace flapjack\attend;
 
 
-use Attend\IDatabaseEngine;
 use flapjack\attend\database\ClassroomQuery;
 
 class PropelEngine implements IDatabaseEngine

@@ -2,7 +2,7 @@
 namespace Attend;
 
 
-use Attend\PropelEngine\PropelEngine;
+use flapjack\attend\PropelEngine;
 
 define('FPDF_FONTPATH', '../font/');
 
