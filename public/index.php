@@ -1,9 +1,9 @@
 <?php
-namespace Attend;
+namespace flapjack\attend;
 
 
-use Attend\Database\ClassroomQuery;
 use Attend\PropelEngine\PropelEngine;
+use flapjack\attend\database\ClassroomQuery;
 use Slim\Container;
 use Slim\App;
 use Psr\Http\Message\ServerRequestInterface;
@@ -62,6 +62,7 @@ $app = new App($dependencies);
 
 $engine = new PropelEngine();
 $engine->connect($config[ 'db' ]);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Routing for Web App Pages

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="attend" defaultIdMethod="native" namespace="\flapjack\attend\database"
+          defaultPhpNamingMethod="underscore">
+    <table name="classrooms" idMethod="native" phpName="Classroom">
+        <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="label" phpName="Label" type="VARCHAR" size="45" required="true"/>
+        <column name="ordering" phpName="Ordering" type="INTEGER"/>
+        <column name="created_at" phpName="CreatedAt" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP" />
+        <unique name="id_UNIQUE">
+            <unique-column name="id"/>
+        </unique>
+        <unique name="name_UNIQUE">
+            <unique-column name="label"/>
+        </unique>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+    <table name="schedules" idMethod="native" phpName="Schedule"
+           description="Table indicating when students are scheduled to attend">
+        <column name="id" phpName="Id" type="INTEGER" sqlType="int unsigned" primaryKey="true" autoIncrement="true"
+                required="true"/>
+        <column name="student_id" phpName="StudentId" type="INTEGER" sqlType="int unsigned" required="true"/>
+        <column name="schedule" phpName="Schedule" type="INTEGER" required="true" defaultValue="0"/>
+        <column name="start_date" phpName="StartDate" type="DATE" required="true"/>
+        <column name="entered_at" phpName="EnteredAt" type="INTEGER" required="true" defaultValue="0"/>
+        <foreign-key foreignTable="students" name="schedules_students_FK">
+            <reference local="student_id" foreign="id"/>
+        </foreign-key>
+        <index name="fk_student_idx">
+            <index-column name="student_id"/>
+        </index>
+        <unique name="id_UNIQUE">
+            <unique-column name="id"/>
+        </unique>
+        <unique name="student_date_unique">
+            <unique-column name="student_id"/>
+            <unique-column name="start_date"/>
+        </unique>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+    <table name="students" idMethod="native" phpName="Student">
+        <column name="id" phpName="Id" type="INTEGER" sqlType="int unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="family_name" phpName="FamilyName" type="VARCHAR" size="45" required="true"/>
+        <column name="first_name" phpName="FirstName" type="VARCHAR" size="45" required="true"/>
+        <column name="enrolled" phpName="Enrolled" type="BOOLEAN" size="1" required="true"/>
+        <column name="classroom_id" phpName="ClassroomId" type="INTEGER" required="false"/>
+        <foreign-key foreignTable="classrooms" name="students_ibfk_1" onDelete="setnull">
+            <reference local="classroom_id" foreign="id"/>
+        </foreign-key>
+        <index name="classroom_id">
+            <index-column name="classroom_id"/>
+        </index>
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+</database>

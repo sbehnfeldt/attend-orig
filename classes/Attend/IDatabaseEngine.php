@@ -16,23 +16,23 @@ interface IDatabaseEngine
 
     public function deleteClassroomById(int $id) : int;
 
-    public function getStudentById(int $id) : array;
+    public function getStudentById(int $id) : ?array;
 
     public function getStudents() : array;
 
     public function postStudent(array $body) : array;
 
-    public function putStudentById(int $id, array $body) : array;
+    public function putStudentById(int $id, array $body) : ?array;
 
-    public function deleteStudentById(int $id) : int;
+    public function deleteStudentById(int $id) : ?int;
 
-    public function getScheduleById(int $id) : array;
+    public function getScheduleById(int $id) : ?array;
 
     public function getSchedules() : array;
 
     public function postSchedule(array $body) : array;
 
-    public function putScheduleById(int $id, array $body) : array;
+    public function putScheduleById(int $id, array $body) : ?array;
 
-    public function deleteScheduleById(int $id) : int;
+    public function deleteScheduleById(int $id) : ?int;
 }

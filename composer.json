@@ -1,7 +1,7 @@
 {
   "name": "smidgen/attend",
   "require": {
-    "propel/propel": "^2.0@dev",
+    "propel/propel": "^2.0@beta",
     "twig/twig": "^2.0",
     "slim/slim": "^3.0"
   },

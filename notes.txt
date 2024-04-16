@@ -13,3 +13,19 @@ cls && vendor\bin\propel model:build --config-dir=generated-reversed-database --
 
 cls && vendor\bin\propel help convert
 cls && vendor\bin\propel convert --config-dir=generated-reversed-database --output-dir=lib
+
+**2024-04-15**
+* Update Propel version in composer.json and update dependencies
+* Write database schema file for Propel based on the current database.
+* Write (update) the propel.json config file, which Propel uses to build database connections.  Do NOT check it into git, as it contains DB secrets.
+* Generate the schema-creation SQL script:
+.\vendor\bin\propel sql:build --config-dir=propel --schema-dir=propel --output-dir=propel
+
+* Generate the Propel model classes:
+.\vendor\bin\propel model:build --config-dir=propel --schema-dir=propel --output-dir=classes/flapjack/attend/database
+
+* Convert the Propel config file propel.json into PHP files to be used by the application:
+.\vendor\bin\propel convert --config-dir=propel
+This will create two PHP files, config.php and loadDatabase.php, by default in the directory "generated-conf."
+These files could be used directly; instead, we take them and incorporate them (tweaking slightly, such as
+using variables instead of hard-coded DB values) into our own PropelEngine::connect().

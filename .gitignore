@@ -6,3 +6,4 @@ public/info.php
 /backup.sh
 /public/upgradeDb.php
 /public/robots.txt
+/logs/
