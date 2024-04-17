@@ -3,8 +3,10 @@ namespace Attend;
 
 
 use flapjack\attend\IDatabaseEngine;
+use Fpdf\Fpdf;
+use PDO;
 
-class AttendPdf extends \FPDF
+class AttendPdf extends Fpdf
 {
 
     /** @var  PDO $pdo */

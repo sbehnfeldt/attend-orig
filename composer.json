@@ -3,13 +3,13 @@
   "require": {
     "propel/propel": "^2.0@beta",
     "twig/twig": "^2.0",
-    "slim/slim": "^3.0"
+    "slim/slim": "^3.0",
+    "fpdf/fpdf": "^1.86",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {
       "": "classes/"
     }
-  },
-  "require-dev": {
   }
 }
