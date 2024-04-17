@@ -2,7 +2,9 @@
 namespace Attend;
 
 
+use flapjack\attend\AttendancePdf;
 use flapjack\attend\PropelEngine;
+use flapjack\attend\SigninPdf;
 
 define('FPDF_FONTPATH', '../font/');
 

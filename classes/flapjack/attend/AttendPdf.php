@@ -1,8 +1,7 @@
 <?php
-namespace Attend;
+namespace flapjack\attend;
 
 
-use flapjack\attend\IDatabaseEngine;
 use Fpdf\Fpdf;
 use PDO;
 

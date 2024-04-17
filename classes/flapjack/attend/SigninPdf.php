@@ -1,5 +1,5 @@
 <?php
-namespace Attend;
+namespace flapjack\attend;
 
 class SigninPdf extends AttendPdf
 {
