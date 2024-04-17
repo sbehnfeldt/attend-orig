@@ -7,6 +7,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Container;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
 
@@ -67,8 +69,8 @@ $engine->connect($config[ 'db' ]);
 // Routing for Web App Pages
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response, array $args) {
-    $loader = new \Twig_Loader_Filesystem('../templates');
-    $twig   = new \Twig_Environment($loader, array(
+    $loader = new FilesystemLoader('../templates');
+    $twig   = new Environment($loader, array(
         'cache' => false
     ));
 
@@ -79,8 +81,8 @@ $app->get('/', function (ServerRequestInterface $request, ResponseInterface $res
 
 
 $app->get('/attendance', function (ServerRequestInterface $request, ResponseInterface $response, array $args) {
-    $loader = new \Twig_Loader_Filesystem('../templates');
-    $twig   = new \Twig_Environment($loader, array(
+    $loader = new FilesystemLoader('../templates');
+    $twig   = new Environment($loader, array(
         'cache' => false
     ));
 
@@ -104,8 +106,8 @@ $app->get('/attendance', function (ServerRequestInterface $request, ResponseInte
 
 
 $app->get('/enrollment', function (ServerRequestInterface $request, ResponseInterface $response, array $args) {
-    $loader = new \Twig_Loader_Filesystem('../templates');
-    $twig   = new \Twig_Environment($loader, array(
+    $loader = new FilesystemLoader('../templates');
+    $twig   = new Environment($loader, array(
         'cache' => false
     ));
 
@@ -115,8 +117,8 @@ $app->get('/enrollment', function (ServerRequestInterface $request, ResponseInte
 });
 
 $app->get('/classrooms', function (ServerRequestInterface $request, ResponseInterface $response, array $args) {
-    $loader = new \Twig_Loader_Filesystem('../templates');
-    $twig   = new \Twig_Environment($loader, array(
+    $loader = new FilesystemLoader('../templates');
+    $twig   = new Environment($loader, array(
         'cache' => false
     ));
 
