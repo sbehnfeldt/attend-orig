@@ -12,3 +12,4 @@ public/info.php
 /propel/config.php
 /propel/loadDatabase.php
 /propel/propel.json
+/public/js/enrollment.bundle.js
