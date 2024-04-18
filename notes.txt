@@ -29,3 +29,16 @@ cls && vendor\bin\propel convert --config-dir=generated-reversed-database --outp
 This will create two PHP files, config.php and loadDatabase.php, by default in the directory "generated-conf."
 These files could be used directly; instead, we take them and incorporate them (tweaking slightly, such as
 using variables instead of hard-coded DB values) into our own PropelEngine::connect().
+
+**2024-04-18**
+Start webpack development
+```shell
+$> npm init -y
+$> npm i webpack webpack-cli
+$> npm i jquery
+$> npm i jquery-ui
+$> npm i moment
+$> npm i datatables.net-dt
+$> npm i datatables.net-buttons
+$> npm i datatables.net-select
+```
