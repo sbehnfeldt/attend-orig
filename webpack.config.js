@@ -5,6 +5,7 @@ module.exports = {
     entry: {
         'classrooms' : './src/js/classrooms.js',
         'enrollment' : './src/js/enrollment.js',
+        'attendance' : './src/js/attendance.js',
     },
 
     output: {

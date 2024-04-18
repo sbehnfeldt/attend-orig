@@ -4,7 +4,7 @@
 
 {% block scripts %}
     {{ parent() }}
-    <script src="js/attendance.js"></script>
+    <script src="/js/attendance.bundle.js"></script>
 {% endblock %}
 
 {% block styles %}
@@ -41,7 +41,7 @@
                 {% for classroom in classrooms %}
                     <h3>{{ classroom.label }}</h3>
 
-                    <table class="attendance-table table table-striped table-bordered">
+                    <table class="attendance-table table table-striped table-bordered" style="width: 100%">
                         <thead>
                         <tr>
                             <th>Name</th>
