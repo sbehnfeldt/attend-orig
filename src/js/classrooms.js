@@ -48,6 +48,11 @@ let ClassroomsTab = (function (selector) {
         buttons: [{
             text: 'New',
             action: () => ClassroomPropsDlg.clear().open() // Clear and open the "Classroom Properties" dialog
+        }, {
+            text: 'Update',
+            extend: 'selected',
+            // Populate (with data from the selected row) and open the "Classroom Properties" dialog
+            action: () => ClassroomPropsDlg.clear().populate(table.rows({ selected: true}).data()[0]).open()
         }]
     });
 
@@ -223,10 +228,6 @@ let ClassroomPropsDlg = (function (selector) {
     });
 
     function open(classroom) {
-        clear();
-        if (classroom) {
-            populate(classroom);
-        }
         dialog.dialog('open');
     }
 
@@ -242,9 +243,11 @@ let ClassroomPropsDlg = (function (selector) {
     }
 
     function populate(classroom) {
+        console.log(classroom);
         $classroomId.val(classroom.Id);
         $label.val(classroom.Label).data('db-val', classroom.Label);
         $order.val(classroom.Ordering).data('db-val', classroom.Ordering);
+        return this;
     }
 
 
@@ -354,7 +357,7 @@ let ClassroomPropsDlg = (function (selector) {
     }
 
 
-    return { clear, open, close };
+    return { clear, populate, open, close };
 })('#classroom-props-dlg');
 
 $(async function () {
