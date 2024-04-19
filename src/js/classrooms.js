@@ -11,12 +11,10 @@ import AttendApi from "./attend-api";
 'use strict';
 
 let ClassroomsTab = (function (selector) {
-    let $self;
     let table;
     let classrooms = [];
 
-    $self = $(selector);
-    table = $self.find('table').DataTable({
+    table = new DataTable(selector, {
         data: classrooms,
         layout: {
             top1Start: 'info',
@@ -91,7 +89,7 @@ let ClassroomsTab = (function (selector) {
     }
 
     return {load, populate, insert };
-})('#classrooms-tab');
+})('#classrooms-table');
 
 
 let ClassroomPropsDlg = (function (selector) {
