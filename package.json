@@ -19,6 +19,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "datatables.net-buttons": "^3.0.2",
     "datatables.net-dt": "^2.0.4",
     "datatables.net-select": "^2.0.1",
