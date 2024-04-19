@@ -138,6 +138,7 @@ class PropelEngine implements IDatabaseEngine
 
         $resource->setLabel($body[ 'Label' ]);
         $resource->setOrdering($body[ 'Ordering' ]);
+        $resource->setUpdatedAt(time());
         $resource->save();
 
         return $resource->toArray();
