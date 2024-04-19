@@ -19,8 +19,17 @@ let EnrollmentTab = (function (selector) {
 
     let table = new DataTable(selector, {
         data: students,
+        layout: {
+            top1Start: 'info',
+            top2Start: null,
+            topStart: "pageLength",
+            topEnd: 'search',
+            bottomStart: 'buttons',
+            bottomEnd: 'paging'
+        },
+
         order: [[1, 'asc']],
-        select: true,
+        select: "single",
         columns: [
             {data: "Id"},
             {data: "FamilyName"},
@@ -37,6 +46,13 @@ let EnrollmentTab = (function (selector) {
                 }
             }
         ],
+        buttons: [{
+            text: "New"
+        }, {
+            text: "Update"
+        }, {
+            text: "Delete"
+        }]
     });
 
     function load() {
