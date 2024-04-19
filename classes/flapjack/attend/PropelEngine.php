@@ -202,12 +202,9 @@ class PropelEngine implements IDatabaseEngine
         return $resource?->toArray();
     }
 
-    public function getStudents(): array
+    public function getStudents(): Collection
     {
-        $query    = new StudentQuery();
-        $resource = $query->find();
-
-        return $resource->toArray();
+        return StudentQuery::create()->find();
     }
 
 

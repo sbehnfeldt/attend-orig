@@ -20,7 +20,7 @@ interface IDatabaseEngine
 
     public function getStudentById(int $id) : ?array;
 
-    public function getStudents() : array;
+    public function getStudents() : Collection;
 
     public function postStudent(array $body) : array;
 
