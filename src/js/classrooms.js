@@ -6,41 +6,31 @@ import 'datatables.net-buttons';
 import 'datatables.net-select';
 import moment from 'moment';
 import Attend from "./attend";
-// import AttendApi from './attend-api';
+import AttendApi from "./attend-api";
 
 'use strict';
 
 let ClassroomsTab = (function (selector) {
-    let $self,
-        table;
+    let $self;
+    let table;
+    let classrooms = [];
 
     $self = $(selector);
     table = $self.find('table').DataTable({
-        ajax: function () {
-            Attend.loadAnother();
-            $.ajax({
-                'url': 'api/classrooms',
-                'method': 'get',
-
-                'success': function (json) {
-                    console.log(json);
-                    for (let i = 0; i < json.length; i++) {
-                        table.row.add(json[i]);
-                    }
-                    table.draw();
-                    Attend.doneLoading();
-                },
-                'error': function (xhr) {
-                    console.log(xhr);
-                    Attend.doneLoading();
-                }
-            });
+        data: classrooms,
+        layout: {
+            top1Start: 'info',
+            topStart: "pageLength",
+            topEnd: 'search',
+            bottomStart: 'buttons',
+            bottomEnd: 'paging'
         },
-        "paging": false,
-        "searching": false,
-        "select": true,
-        "order": [[2, "asc"]],
-        "columns": [
+        autoWidth: false,
+        paging: false,
+        searching: false,
+        select: "single",
+        order: [[2, "asc"]],
+        columns: [
             {data: "Id"},
             {data: "Label"},
             {data: "Ordering"}, {
@@ -56,6 +46,7 @@ let ClassroomsTab = (function (selector) {
             }
         ]
     });
+
 
     let b0 = new $.fn.dataTable.Buttons(table, {
         buttons: [{
@@ -132,9 +123,25 @@ let ClassroomsTab = (function (selector) {
         table.row.add(data).draw();
     }
 
-    function reload() {
-        table.ajax.reload();
+
+    async function load() {
+        Attend.loadAnother();
+        classrooms = await AttendApi.classrooms.select();
+        Attend.doneLoading();
     }
+
+    function populate() {
+        table.clear();
+        for (let i = 0; i < classrooms.length; i++ ) {
+            table.row.add(classrooms[i]);
+        }
+        table.draw();
+        return this;
+    }
+
+    // function reload() {
+    //     table.ajax.reload();
+    // }
 
     function redrawRow(newData) {
         table.rows().every(function ( /* rowIdx, tableLoop, rowLoop */) {
@@ -163,12 +170,7 @@ let ClassroomsTab = (function (selector) {
         });
     }
 
-    return {
-        "insert": insert,
-        "reload": reload,
-        "redrawRow": redrawRow,
-        "deleteRow": deleteRow
-    };
+    return { load, populate, insert, redrawRow, deleteRow };
 })('#classrooms-tab');
 
 let ClassroomPropsDlg = (function (selector) {
@@ -353,7 +355,9 @@ let ClassroomPropsDlg = (function (selector) {
     };
 })('#classroom-props-dlg');
 
-$(function () {
+$(async function () {
+    await ClassroomsTab.load();
+    ClassroomsTab.populate();
     $('#tabs').tabs().show();
 });
 

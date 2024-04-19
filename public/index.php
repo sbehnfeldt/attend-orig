@@ -161,6 +161,7 @@ $app->get('/api/classrooms/{id}',
 $app->get('/api/classrooms',
     function (ServerRequestInterface $request, ResponseInterface $response, array $args) use ($engine) {
         $results = $engine->getClassrooms();
+        $results = [ 'data' => $results->toArray()];
 
         $response = $response->withStatus(200, 'OK');
         $response = $response->withHeader('Content-type', 'application/json');

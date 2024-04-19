@@ -2,13 +2,15 @@
 namespace flapjack\attend;
 
 
+use Propel\Runtime\Collection\Collection;
+
 interface IDatabaseEngine
 {
     public function connect(array $config);
 
     public function getClassroomById(int $id) : array;
 
-    public function getClassrooms() : array;
+    public function getClassrooms() : Collection;
 
     public function postClassroom(array $body) : array;
 

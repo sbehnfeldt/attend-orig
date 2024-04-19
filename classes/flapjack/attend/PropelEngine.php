@@ -8,6 +8,7 @@ use flapjack\attend\database\Schedule;
 use flapjack\attend\database\ScheduleQuery;
 use flapjack\attend\database\Student;
 use flapjack\attend\database\StudentQuery;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Propel;
 
@@ -80,12 +81,9 @@ class PropelEngine implements IDatabaseEngine
     }
 
 
-    public function getClassrooms() : array
+    public function getClassrooms() : Collection
     {
-        $query    = new ClassroomQuery();
-        $resource = $query->find();
-
-        return $resource->toArray();
+        return ClassroomQuery::create()->find();
     }
 
     public function postClassroom(array $body) : array
