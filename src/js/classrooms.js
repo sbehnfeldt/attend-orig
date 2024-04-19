@@ -41,7 +41,7 @@ let ClassroomsTab = (function (selector) {
             }, {
                 data: "UpdatedAt",
                 render: (x) => {
-                    return moment(x).format('YYYY-MM-DD');
+                    return x ? moment(x).format('YYYY-MM-DD') : '';
                 }
             }
         ],

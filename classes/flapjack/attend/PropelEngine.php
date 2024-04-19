@@ -8,6 +8,7 @@ use flapjack\attend\database\Schedule;
 use flapjack\attend\database\ScheduleQuery;
 use flapjack\attend\database\Student;
 use flapjack\attend\database\StudentQuery;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Propel;
@@ -90,7 +91,38 @@ class PropelEngine implements IDatabaseEngine
     {
         $resource = new Classroom();
         $resource->setLabel($body[ 'Label' ]);
-        $resource->setOrdering($body[ 'Ordering' ]);
+
+        if ($body['Ordering']) {
+            $resource->setOrdering($body[ 'Ordering' ]);
+
+            // If an "Ordering" value is specified, bump up by one the ordering value for any current classrooms
+            // whose current "Ordering" value is the same or higher than that of the new classroom
+            $classrooms = ClassroomQuery::create()
+                                        ->filterByOrdering(['min' => $body['Ordering']])
+                                        ->orderBy('Ordering', Criteria::DESC)
+                                        ->find();
+
+            /** @var Classroom $classroom */
+            foreach ($classrooms as $classroom) {
+                $classroom->setOrdering($classroom->getOrdering() + 1);
+                $classroom->save();
+            }
+        } else {
+            // If no "Ordering" value is specified in the POST request, set the "Ordering" value to one higher than
+            // the current highest "Ordering" value
+            $maxValue = ClassroomQuery::create()
+                                      ->withColumn(
+                                          'MAX(Ordering)',
+                                          'max_ordering'
+                                      )
+                                      ->select(['max_ordering'])
+                                      ->orderBy('max_ordering', Criteria::DESC)
+                                      ->findOne();
+
+            $resource->setOrdering($maxValue + 1);
+        }
+
+        $resource->setCreatedAt(time());
         $resource->save();
 
         return $resource->toArray();
