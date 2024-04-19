@@ -53,6 +53,14 @@ let ClassroomsTab = (function (selector) {
             extend: 'selected',
             // Populate (with data from the selected row) and open the "Classroom Properties" dialog
             action: () => ClassroomPropsDlg.clear().populate(table.rows({selected: true}).data()[0]).open()
+        }, {
+            text: 'Delete',
+            extend: 'selected',
+            action: async () => {
+                await remove(table.rows({selected: true}).data()[0].Id);
+                await load();
+                populate();
+            }
         }]
     });
 
@@ -74,6 +82,12 @@ let ClassroomsTab = (function (selector) {
         }
         table.draw();
         return this;
+    }
+
+    async function remove(id) {
+        Attend.loadAnother();
+        await AttendApi.classrooms.remove(id);
+        Attend.doneLoading();
     }
 
     return {load, populate, insert };
@@ -145,7 +159,6 @@ let ClassroomPropsDlg = (function (selector) {
 
 
     function populate(classroom) {
-        console.log(classroom);
         $classroomId.val(classroom.Id);
         $label.val(classroom.Label).data('db-val', classroom.Label);
         $order.val(classroom.Ordering).data('db-val', classroom.Ordering);

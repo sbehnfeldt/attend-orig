@@ -150,8 +150,17 @@ class PropelEngine implements IDatabaseEngine
         if (null === $resource) {
             return 0;
         }
-        $resource->delete();
 
+        $classrooms = ClassroomQuery::create()
+                                    ->filterByOrdering(['min' => $resource->getOrdering() + 1])
+                                    ->orderBy('Ordering', Criteria::DESC)
+                                    ->find();
+        foreach ($classrooms as $classroom) {
+            $classroom->setOrdering($classroom->getOrdering() - 1 );
+            $classroom->save();
+        }
+
+        $resource->delete();
         return $id;
     }
 
