@@ -44,79 +44,83 @@ let ClassroomsTab = (function (selector) {
                     return moment(x).format('YYYY-MM-DD');
                 }
             }
-        ]
-    });
-
-
-    let b0 = new $.fn.dataTable.Buttons(table, {
+        ],
         buttons: [{
-            "text": "New",
-            "action": function () {
-                ClassroomPropsDlg.open();
-            }
-        }, {
-            "extend": "selected",
-            "text": "Edit",
-            "action": function (e, dt, button, config) {
-                let selected = dt.rows({selected: true}).indexes();
-                if (1 < selected.length) {
-                    alert("Can edit only 1 record at a time");
-                } else {
-                    ClassroomPropsDlg.open(dt.rows(selected[0]).data()[0]);
-                }
-            }
-        }, {
-            "extend": "selected",
-            "text": "Delete",
-            "action": function (e, dt) {
-                let selected = dt.rows({selected: true});
-                let msg      = (1 === selected[0].length) ? 'Are you sure you want to delete this record?' : 'Are you sure you want to delete these ' + selected[0].length + ' records?';
-                if (confirm(msg)) {
-                    let length = selected[0].length;
-                    selected.every(function () {
-                        let row  = this;
-                        let data = row.data();
-                        Attend.loadAnother();
-                        $.ajax({
-                            "url": "api/classrooms/" + data.Id,
-                            "method": "delete",
-
-                            "success": function (json) {
-                                length--;
-                                if (!length) {
-                                    selected.remove().draw(false);
-                                }
-                                Attend.doneLoading();
-                            },
-                            "error": function (xhr) {
-                                console.log(xhr);
-                                length--;
-                                row.deselect();
-                                selected = dt.rows({selected: true});
-                                if (!length) {
-                                    selected.remove().draw(false);
-                                }
-                                Attend.doneLoading();
-                            }
-                        });
-                    });
-                }
-            }
+            text: 'New',
+            action: () => ClassroomPropsDlg.clear().open() // Clear and open the "Classroom Properties" dialog
         }]
     });
-    b0.dom.container.eq(0).appendTo($self.find('.record-buttons'));
 
-    let b1 = new $.fn.dataTable.Buttons(table, {
-        "buttons": [{
-            "text": "Reload",
-            "action": function (e, dt) {
-                Attend.loadAnother();
-                table.clear();
-                dt.ajax.reload(Attend.doneLoading);
-            }
-        }]
-    });
-    b1.dom.container.eq(0).appendTo($self.find('.table-buttons span'));
+
+    // let b0 = new $.fn.dataTable.Buttons(table, {
+    //     buttons: [{
+    //         "text": "New",
+    //         "action": function () {
+    //             ClassroomPropsDlg.open();
+    //         }
+    //     }, {
+    //         "extend": "selected",
+    //         "text": "Edit",
+    //         "action": function (e, dt, button, config) {
+    //             let selected = dt.rows({selected: true}).indexes();
+    //             if (1 < selected.length) {
+    //                 alert("Can edit only 1 record at a time");
+    //             } else {
+    //                 ClassroomPropsDlg.open(dt.rows(selected[0]).data()[0]);
+    //             }
+    //         }
+    //     }, {
+    //         "extend": "selected",
+    //         "text": "Delete",
+    //         "action": function (e, dt) {
+    //             let selected = dt.rows({selected: true});
+    //             let msg      = (1 === selected[0].length) ? 'Are you sure you want to delete this record?' : 'Are you sure you want to delete these ' + selected[0].length + ' records?';
+    //             if (confirm(msg)) {
+    //                 let length = selected[0].length;
+    //                 selected.every(function () {
+    //                     let row  = this;
+    //                     let data = row.data();
+    //                     Attend.loadAnother();
+    //                     $.ajax({
+    //                         "url": "api/classrooms/" + data.Id,
+    //                         "method": "delete",
+    //
+    //                         "success": function (json) {
+    //                             length--;
+    //                             if (!length) {
+    //                                 selected.remove().draw(false);
+    //                             }
+    //                             Attend.doneLoading();
+    //                         },
+    //                         "error": function (xhr) {
+    //                             console.log(xhr);
+    //                             length--;
+    //                             row.deselect();
+    //                             selected = dt.rows({selected: true});
+    //                             if (!length) {
+    //                                 selected.remove().draw(false);
+    //                             }
+    //                             Attend.doneLoading();
+    //                         }
+    //                     });
+    //                 });
+    //             }
+    //         }
+    //     }]
+    // });
+    // b0.dom.container.eq(0).appendTo($self.find('.record-buttons'));
+    //
+    // let b1 = new $.fn.dataTable.Buttons(table, {
+    //     "buttons": [{
+    //         "text": "Reload",
+    //         "action": function (e, dt) {
+    //             Attend.loadAnother();
+    //             table.clear();
+    //             dt.ajax.reload(Attend.doneLoading);
+    //         }
+    //     }]
+    // });
+    // b1.dom.container.eq(0).appendTo($self.find('.table-buttons span'));
 
 
     function insert(data) {
@@ -234,6 +238,7 @@ let ClassroomPropsDlg = (function (selector) {
         $form[0].reset();
         $required.removeClass('missing');
         $inputs.data('db-val', '').removeClass('modified');
+        return this;
     }
 
     function populate(classroom) {
@@ -349,10 +354,7 @@ let ClassroomPropsDlg = (function (selector) {
     }
 
 
-    return {
-        'open': open,
-        'close': close
-    };
+    return { clear, open, close };
 })('#classroom-props-dlg');
 
 $(async function () {
