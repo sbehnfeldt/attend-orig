@@ -290,6 +290,8 @@ $app->get('/api/schedules/{id}',
 $app->get('/api/schedules',
     function (ServerRequestInterface $request, ResponseInterface $response, array $args) use ($engine) {
         $results  = $engine->getSchedules($request, $response, $args);
+        $results = [ 'data' => $results->toArray()];
+
         $response = $response->withStatus(200, 'OK');
         $response = $response->withHeader('Content-type', 'application/json');
         $response->getBody()->write(json_encode($results));

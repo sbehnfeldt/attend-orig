@@ -30,7 +30,7 @@ interface IDatabaseEngine
 
     public function getScheduleById(int $id) : ?array;
 
-    public function getSchedules() : array;
+    public function getSchedules() : Collection;
 
     public function postSchedule(array $body) : array;
 

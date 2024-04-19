@@ -258,12 +258,9 @@ class PropelEngine implements IDatabaseEngine
         return $resource?->toArray();
     }
 
-    public function getSchedules(): array
+    public function getSchedules(): Collection
     {
-        $query    = new ScheduleQuery();
-        $resource = $query->find();
-
-        return $resource->toArray();
+        return ScheduleQuery::create()->find();
     }
 
     public function postSchedule(array $body): array

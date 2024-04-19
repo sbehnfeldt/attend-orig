@@ -15,6 +15,7 @@ import AttendApi from './attend-api';
 let EnrollmentTab = (function (selector) {
     let classrooms = [];
     let students = [];
+    let schedules = [];
 
     let table = new DataTable(selector, {
         data: students,
@@ -41,10 +42,12 @@ let EnrollmentTab = (function (selector) {
     function load() {
         Attend.loadAnother();
         try {
-            let p = Promise.all([ AttendApi.classrooms.select(), AttendApi.students.select()])
+            let p = Promise.all([ AttendApi.classrooms.select(), AttendApi.students.select(), AttendApi.schedules.select()])
                 .then((values) => {
                     classrooms = values[0];
                     students = values[1];
+                    schedules = values[2];
+                    console.log(schedules);
                 })
                 .catch((err) => {
                     console.error(err);
