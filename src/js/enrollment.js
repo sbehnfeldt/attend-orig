@@ -7,6 +7,7 @@ import 'datatables.net-buttons';
 import 'datatables.net-select';
 import Attend from "./attend";
 import AttendApi from './attend-api';
+import moment from "moment";
 
 'use strict';
 
@@ -46,24 +47,51 @@ let EnrollmentTab = (function (selector) {
             }
         ],
         buttons: [{
-            text: "New",
-            action: () => StudentPropsDlg.clear().open()   // Clear and open the "Student Properties" dialog
+            text: 'New',
+            action: () => StudentPropsDlg.clear().open() // Clear and open the "Student Properties" dialog
         }, {
-            text: "Update"
+            text: 'Update',
+            extend: 'selected',
+            // Populate (with data from the selected row) and open the "Student Properties" dialog
+            action: () => {
+                StudentPropsDlg.clear().populate(table.rows({selected: true}).data()[0]).open()
+            }
         }, {
-            text: "Delete"
+            text: 'Delete',
+            extend: 'selected',
+            action: async () => {
+                await remove(table.rows({selected: true}).data()[0].Id);
+                await load();
+                populate();
+            }
         }]
     });
 
     function load() {
         Attend.loadAnother();
         try {
-            let p = Promise.all([AttendApi.classrooms.select(), AttendApi.students.select(), AttendApi.schedules.select()])
+            return Promise.all([AttendApi.classrooms.select(), AttendApi.students.select(), AttendApi.schedules.select()])
                 .then((values) => {
                     classrooms = values[0];
                     students   = values[1];
                     schedules  = values[2];
-                    console.log(schedules);
+
+                    // Update each object in the "students" array with the corresponding classroom and schedule data.
+                    // This will eliminate the need to search through the classrooms and schedules arrays later on.
+                    students.forEach((elem, idx, arr) => {
+                        elem['Classroom'] = classrooms.find((e) => e.Id === elem.ClassroomId);
+                        elem['Schedules'] = schedules
+                            .filter((e) => e.StudentId === elem.Id)
+                            .sort((a, b) => {
+                                if (moment(a.StartDate) < moment(b.StartDate)) {
+                                    return 1;
+                                } else if (moment(a.StartDate) > moment(b.StartDate)) {
+                                    return -1;
+                                }
+                                return 0;
+                            });
+                    });
+
                     Attend.doneLoading();
                 })
                 .catch((err) => {
@@ -71,7 +99,6 @@ let EnrollmentTab = (function (selector) {
                     alert("Students didn't load");
                     Attend.doneLoading();
                 });
-            return p;
         } catch (e) {
             console.log(e);
             Attend.doneLoading();
@@ -85,6 +112,12 @@ let EnrollmentTab = (function (selector) {
         }
         table.draw();
         return this;
+    }
+
+    async function remove(id) {
+        Attend.loadAnother();
+        await AttendApi.students.remove(id);
+        Attend.doneLoading();
     }
 
     return {load, populate};
@@ -108,7 +141,6 @@ let StudentPropsDlg = (function (selector) {
         dialog;
 
     $self       = $(selector);
-    console.log( $self.length );
     $form       = $self.find('form');
     $studentId  = $form.find('[name=Id]');
     $familyName = $self.find('[name=FamilyName]');
@@ -169,10 +201,11 @@ let StudentPropsDlg = (function (selector) {
         // No op
     });
 
+
+    // When the drop-down list of defined schedules changes,
+    // populate the schedule check boxes
     $list.on('change', function () {
-        let id  = $studentId.val();
-        let idx = $(this)[0].selectedIndex;
-        // let sched = Schedules.records[id][idx].Schedule;
+        let sched = this.value;
         $boxes.each(function (idx, elem) {
             if ($(elem).val() & sched) {
                 $(elem).prop('checked', true);
@@ -211,7 +244,6 @@ let StudentPropsDlg = (function (selector) {
     }
 
     function populate(student) {
-        let $opt;
 
         $studentId.val(student.Id);
         $familyName.val(student.FamilyName);
@@ -221,12 +253,13 @@ let StudentPropsDlg = (function (selector) {
         $startDate.datepicker('setDate', Attend.getMonday(new Date()));
 
         $list.removeClass('hidden');
-        // for (let i = 0; i < Schedules.records[student.Id].length; i++) {
-        //     let s = Schedules.records[student.Id][i];
-        //     $opt  = $('<option>').text(s.StartDate.split('T')[0]).val(s.Id);
-        //     $list.append($opt);
-        // }
+        for (let i = 0; i < student.Schedules.length; i++) {
+            let sched = student.Schedules[i];
+            let $opt  = $('<option>').text(sched.StartDate.split('T')[0]).val(sched.Schedule);
+            $list.append($opt);
+        }
         $list.trigger('change');
+        return this;
     }
 
     function validate() {
@@ -430,7 +463,7 @@ let StudentPropsDlg = (function (selector) {
     }
 
 
-    return { clear, populate, open, close };
+    return {clear, populate, open, close};
 })('#student-props-dlg');
 
 
@@ -438,5 +471,3 @@ $(async function () {
     await EnrollmentTab.load();
     EnrollmentTab.populate();
 });
-
-

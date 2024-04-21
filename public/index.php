@@ -124,7 +124,9 @@ $app->get('/enrollment', function (ServerRequestInterface $request, ResponseInte
         'cache' => false
     ));
 
-    $response->getBody()->write($twig->render('enrollment.html.twig', []));
+    $response->getBody()->write($twig->render('enrollment.html.twig', [
+        'classrooms' => ClassroomQuery::create()->find()
+    ]));
 
     return $response;
 });

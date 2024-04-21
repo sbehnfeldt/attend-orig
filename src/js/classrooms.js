@@ -62,11 +62,6 @@ let ClassroomsTab = (function (selector) {
         }]
     });
 
-    function insert(data) {
-        table.row.add(data).draw();
-    }
-
-
     async function load() {
         Attend.loadAnother();
         classrooms = await AttendApi.classrooms.select();
@@ -88,7 +83,7 @@ let ClassroomsTab = (function (selector) {
         Attend.doneLoading();
     }
 
-    return {load, populate, insert };
+    return {load, populate };
 })('#classrooms-table');
 
 
