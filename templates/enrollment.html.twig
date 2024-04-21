@@ -11,144 +11,135 @@
 {% block main %}
     <h1>Enrollment</h1>
 
-    <div id="tabs">
-        <ul>
-            <li><a href="#enrollment-tab">Enrollment</a></li>
-        </ul>
+    <table id="enrollment-table" class="display compact strip">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Family Name</th>
+                <th>First Name</th>
+                <th>Enrolled</th>
+                <th>Classroom</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-        <section id="enrollment-tab">
-            <h2>Enrollment</h2>
-            <table id="enrollment-table" class="display compact strip" style="width: 100%">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Family Name</th>
-                    <th>First Name</th>
-                    <th>Enrolled</th>
-                    <th>Classroom</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
-            <div class="ui-dialog modal-dialog" id="student-props-dlg" title="Add/Edit Student">
-                <form>
-                    <p class="update-tips"></p>
-                    <div>
-                        <input class="hidden" name="Id">
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <label>Family Name</label>
-                            <input type="text" name="FamilyName" class="required">
-                        </div>
-                        <div class="col-xs-6">
-                            <label>First Name</label>
-                            <input type="text" name="FirstName" class="required">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label for="">Classroom</label>
-                            <select name="ClassroomsList" id="ClassroomId" class="required">
-                                <option value="">Select a classroom</option>
-                                {% for classroom in classrooms %}
-                                    <option value="{{ classroom.Id }}">{{ classroom.Label }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Enrolled </label>
-                            <input class="pull-left" type="checkbox" name="Enrolled" checked>
-                        </div>
-                    </div>
-
-
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2>Schedule</h2>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-6">
-                            Week Of: <input type="text" name="WeekOf"/>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <table class="schedule-table">
-                                <thead>
-                                <tr>
-                                    <th>&nbsp;</th>
-                                    <th>
-                                        <button class="sched-button" data-key="0x421">Mon</button>
-                                    </th>
-                                    <th>
-                                        <button class="sched-button" data-key="0x842">Tue</button>
-                                    </th>
-                                    <th>
-                                        <button class="sched-button" data-key="0x1084">Wed</button>
-                                    </th>
-                                    <th>
-                                        <button class="sched-button" data-key="0x2108">Thu</button>
-                                    </th>
-                                    <th>
-                                        <button class="sched-button" data-key="0x4210">Fri</button>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <button class="sched-button" data-key="0x1f">AM</button>
-                                    </td>
-                                    <td><input type="checkbox" value="0x01"></td>
-                                    <td><input type="checkbox" value="0x02"></td>
-                                    <td><input type="checkbox" value="0x04"></td>
-                                    <td><input type="checkbox" value="0x08"></td>
-                                    <td><input type="checkbox" value="0x10"></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <button class="sched-button" data-key="0x3e0">Lunch</button>
-                                    </td>
-                                    <td><input type="checkbox" value="0x20"></td>
-                                    <td><input type="checkbox" value="0x40"></td>
-                                    <td><input type="checkbox" value="0x80"></td>
-                                    <td><input type="checkbox" value="0x100"></td>
-                                    <td><input type="checkbox" value="0x200"></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <button class="sched-button" data-key="0x7c00">PM</button>
-                                    </td>
-                                    <td><input type="checkbox" value="0x400"></td>
-                                    <td><input type="checkbox" value="0x800"></td>
-                                    <td><input type="checkbox" value="0x1000"></td>
-                                    <td><input type="checkbox" value="0x2000"></td>
-                                    <td><input type="checkbox" value="0x4000"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <select name="SchedulesList" class=""></select>
-                        </div>
-                    </div>
-                </form>
+    <div class="ui-dialog modal-dialog" id="student-props-dlg" title="Add/Edit Student">
+        <form>
+            <p class="update-tips"></p>
+            <div>
+                <input class="hidden" name="Id">
             </div>
-        </section>
+            <div class="row">
+                <div class="col-xs-6">
+                    <label>Family Name</label>
+                    <input type="text" name="FamilyName" class="required">
+                </div>
+                <div class="col-xs-6">
+                    <label>First Name</label>
+                    <input type="text" name="FirstName" class="required">
+                </div>
+            </div>
 
+            <div class="row">
+                <div class="col-xs-12">
+                    <label for="">Classroom</label>
+                    <select name="ClassroomsList" id="ClassroomId" class="required">
+                        <option value="">Select a classroom</option>
+                        {% for classroom in classrooms %}
+                            <option value="{{ classroom.Id }}">{{ classroom.Label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>Enrolled </label>
+                    <input class="pull-left" type="checkbox" name="Enrolled" checked>
+                </div>
+            </div>
+
+
+            <hr>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2>Schedule</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-6">
+                    Week Of: <input type="text" name="WeekOf"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>
+                                    <button class="sched-button" data-key="0x421">Mon</button>
+                                </th>
+                                <th>
+                                    <button class="sched-button" data-key="0x842">Tue</button>
+                                </th>
+                                <th>
+                                    <button class="sched-button" data-key="0x1084">Wed</button>
+                                </th>
+                                <th>
+                                    <button class="sched-button" data-key="0x2108">Thu</button>
+                                </th>
+                                <th>
+                                    <button class="sched-button" data-key="0x4210">Fri</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <button class="sched-button" data-key="0x1f">AM</button>
+                            </td>
+                            <td><input type="checkbox" value="0x01"></td>
+                            <td><input type="checkbox" value="0x02"></td>
+                            <td><input type="checkbox" value="0x04"></td>
+                            <td><input type="checkbox" value="0x08"></td>
+                            <td><input type="checkbox" value="0x10"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button class="sched-button" data-key="0x3e0">Lunch</button>
+                            </td>
+                            <td><input type="checkbox" value="0x20"></td>
+                            <td><input type="checkbox" value="0x40"></td>
+                            <td><input type="checkbox" value="0x80"></td>
+                            <td><input type="checkbox" value="0x100"></td>
+                            <td><input type="checkbox" value="0x200"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button class="sched-button" data-key="0x7c00">PM</button>
+                            </td>
+                            <td><input type="checkbox" value="0x400"></td>
+                            <td><input type="checkbox" value="0x800"></td>
+                            <td><input type="checkbox" value="0x1000"></td>
+                            <td><input type="checkbox" value="0x2000"></td>
+                            <td><input type="checkbox" value="0x4000"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-6">
+                    <select name="SchedulesList" class=""></select>
+                </div>
+            </div>
+        </form>
     </div>
+
 {% endblock %}

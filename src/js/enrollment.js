@@ -437,7 +437,6 @@ let StudentPropsDlg = (function (selector) {
 $(async function () {
     await EnrollmentTab.load();
     EnrollmentTab.populate();
-    $('#tabs').tabs().show();
 });
 
 
