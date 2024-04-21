@@ -64,6 +64,7 @@ let EnrollmentTab = (function (selector) {
                     students   = values[1];
                     schedules  = values[2];
                     console.log(schedules);
+                    Attend.doneLoading();
                 })
                 .catch((err) => {
                     console.error(err);
@@ -73,7 +74,6 @@ let EnrollmentTab = (function (selector) {
             return p;
         } catch (e) {
             console.log(e);
-        } finally {
             Attend.doneLoading();
         }
     }
