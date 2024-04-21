@@ -11,11 +11,10 @@ import AttendApi from './attend-api';
 'use strict';
 
 
-
 let EnrollmentTab = (function (selector) {
     let classrooms = [];
-    let students = [];
-    let schedules = [];
+    let students   = [];
+    let schedules  = [];
 
     let table = new DataTable(selector, {
         data: students,
@@ -41,13 +40,14 @@ let EnrollmentTab = (function (selector) {
             }, {
                 data: "ClassroomId",
                 render: function (data) {
-                    let classroom = classrooms.find((e) => e.Id === data );
+                    let classroom = classrooms.find((e) => e.Id === data);
                     return classroom.Label;
                 }
             }
         ],
         buttons: [{
-            text: "New"
+            text: "New",
+            action: () => StudentPropsDlg.clear().open()   // Clear and open the "Student Properties" dialog
         }, {
             text: "Update"
         }, {
@@ -58,20 +58,20 @@ let EnrollmentTab = (function (selector) {
     function load() {
         Attend.loadAnother();
         try {
-            let p = Promise.all([ AttendApi.classrooms.select(), AttendApi.students.select(), AttendApi.schedules.select()])
+            let p = Promise.all([AttendApi.classrooms.select(), AttendApi.students.select(), AttendApi.schedules.select()])
                 .then((values) => {
                     classrooms = values[0];
-                    students = values[1];
-                    schedules = values[2];
+                    students   = values[1];
+                    schedules  = values[2];
                     console.log(schedules);
                 })
                 .catch((err) => {
                     console.error(err);
-                    alert( "Students didn't load");
+                    alert("Students didn't load");
                     Attend.doneLoading();
                 });
             return p;
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         } finally {
             Attend.doneLoading();
@@ -108,6 +108,7 @@ let StudentPropsDlg = (function (selector) {
         dialog;
 
     $self       = $(selector);
+    console.log( $self.length );
     $form       = $self.find('form');
     $studentId  = $form.find('[name=Id]');
     $familyName = $self.find('[name=FamilyName]');
@@ -122,17 +123,17 @@ let StudentPropsDlg = (function (selector) {
     $required = $form.find('.required');
 
     dialog = $self.dialog({
-        "autoOpen": false,
-        "modal": true,
-        "width": "450px",
-        "buttons": {
-            "Submit": function onSubmit() {
+        autoOpen: false,
+        modal: true,
+        width: "450px",
+        buttons: {
+            Submit: function onSubmit() {
                 if (validate()) {
                     submit();
                     close();
                 }
             },
-            "Cancel": function onCancel() {
+            Cancel: function onCancel() {
                 StudentPropsDlg.close();
             }
         }
@@ -169,8 +170,8 @@ let StudentPropsDlg = (function (selector) {
     });
 
     $list.on('change', function () {
-        let id    = $studentId.val();
-        let idx   = $(this)[0].selectedIndex;
+        let id  = $studentId.val();
+        let idx = $(this)[0].selectedIndex;
         // let sched = Schedules.records[id][idx].Schedule;
         $boxes.each(function (idx, elem) {
             if ($(elem).val() & sched) {
@@ -191,13 +192,8 @@ let StudentPropsDlg = (function (selector) {
     });
 
 
-    function open(student) {
-        clear();
-        if (student) {
-            populate(student);
-        } else {
-            $startDate.datepicker('setDate', Attend.getMonday(new Date()));
-        }
+    function open() {
+        $startDate.datepicker('setDate', Attend.getMonday(new Date()));
         dialog.dialog('open');
     }
 
@@ -211,6 +207,7 @@ let StudentPropsDlg = (function (selector) {
         $classrooms.addClass('required');
         $list.empty();
         $list.addClass('hidden');
+        return this;
     }
 
     function populate(student) {
@@ -278,14 +275,14 @@ let StudentPropsDlg = (function (selector) {
 
             // console.log(cur);
             // if (cur.schedule == map) {
-                // Update student, leave schedule unchanged
-                // update(id, student, null);
+            // Update student, leave schedule unchanged
+            // update(id, student, null);
             // } else {
-                // Update student, add new schedule
-                // update(id, student, {
-                //     StartDate: $startDate.val(),
-                //     Schedule: map
-                // });
+            // Update student, add new schedule
+            // update(id, student, {
+            //     StartDate: $startDate.val(),
+            //     Schedule: map
+            // });
             // }
         }
         StudentPropsDlg.close();
@@ -433,10 +430,7 @@ let StudentPropsDlg = (function (selector) {
     }
 
 
-    return {
-        'open': open,
-        'close': close
-    };
+    return { clear, populate, open, close };
 })('#student-props-dlg');
 
 
