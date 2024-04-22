@@ -311,37 +311,17 @@ let StudentPropsDlg = (function (selector) {
                 });
 
             } else {
-                // Current student: update student (if necessary) and schedule (if necessary) in parallel
-                let idx = $list.prop('selectedIndex');
-                await AttendApi.students.update(student);
+                // Current student: update student and schedule (if necessary)
+                student = await AttendApi.students.update(student);
 
-                if ( !idx ) {
-                    console.log( "Inserting schedule" );
-                    let r = await AttendApi.schedules.insert({
+                let cur = $list.val();
+                console.log(cur, schedule);
+                if (cur !== schedule) {
+                    await AttendApi.schedules.insert({
                         StudentId: student.Id,
                         Schedule: schedule,
                         StartDate: moment()
                     });
-                    console.log(r);
-                } else {
-                    // let sched = this.value;
-                    let temp = $list.val();
-                    console.log(temp);
-
-                    // let cur = Schedules.records[id][idx];
-
-                    // console.log(cur);
-                    // if (cur.schedule == map) {
-                    // Update student, leave schedule unchanged
-                    // update(id, student, null);
-                    // } else {
-                    // Update student, add new schedule
-                    // update(id, student, {
-                    //     StartDate: $startDate.val(),
-                    //     Schedule: map
-                    // });
-                    // }
-
                 }
             }
 
