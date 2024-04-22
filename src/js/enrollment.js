@@ -116,8 +116,14 @@ let EnrollmentTab = (function (selector) {
 
     async function remove(id) {
         Attend.loadAnother();
-        await AttendApi.students.remove(id);
-        Attend.doneLoading();
+        try {
+            await AttendApi.students.remove(id);
+        } catch (e) {
+            console.log(e);
+            alert( "Unable to delete student." );
+        } finally {
+            Attend.doneLoading();
+        }
     }
 
     return {load, populate};

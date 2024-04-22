@@ -79,8 +79,14 @@ let ClassroomsTab = (function (selector) {
 
     async function remove(id) {
         Attend.loadAnother();
-        await AttendApi.classrooms.remove(id);
-        Attend.doneLoading();
+        try {
+            await AttendApi.classrooms.remove(id);
+        } catch (e) {
+            console.log(e);
+            alert( "Unable to delete classroom.")
+        } finally {
+            Attend.doneLoading();
+        }
     }
 
     return {load, populate };
