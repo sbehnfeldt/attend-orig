@@ -64,8 +64,14 @@ let ClassroomsTab = (function (selector) {
 
     async function load() {
         Attend.loadAnother();
-        classrooms = await AttendApi.classrooms.select();
-        Attend.doneLoading();
+        try {
+            classrooms = await AttendApi.classrooms.select();
+        } catch ( e ) {
+            console.log(e);
+            alert( "Unable to load classrooms");
+        } finally {
+            Attend.doneLoading();
+        }
     }
 
     function populate() {
@@ -122,17 +128,17 @@ let ClassroomPropsDlg = (function (selector) {
     $required = $form.find('.required');
 
     dialog = $self.dialog({
-        "autoOpen": false,
-        "modal": true,
-        "width": "300px",
-        "buttons": {
-            "Submit": async function () {
+        autoOpen: false,
+        modal: true,
+        width: "300px",
+        buttons: {
+            Submit: async function () {
                 if (validate()) {
                     await submit();
                     await ClassroomsTab.load().then(() => ClassroomsTab.populate());
                 }
             },
-            "Cancel": function () {
+            Cancel: function () {
                 ClassroomPropsDlg.close();
             }
         }
@@ -185,10 +191,18 @@ let ClassroomPropsDlg = (function (selector) {
             Label: $label.val(),
             Ordering: '' === $order.val() ? null : $order.val()
         };
-        if ($classroomId.val()) {
-            await AttendApi.classrooms.update(data);
-        } else {
-            await AttendApi.classrooms.insert(data);
+        Attend.loadAnother();
+        try {
+            if ($classroomId.val()) {
+                await AttendApi.classrooms.update(data);
+            } else {
+                await AttendApi.classrooms.insert(data);
+            }
+        } catch (e) {
+            console.log(e);
+            alert( "Unable to complete operation");
+        } finally {
+            Attend.doneLoading();
         }
         close();
     }
