@@ -11,6 +11,7 @@ use flapjack\attend\database\StudentQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
 
 
@@ -70,30 +71,45 @@ class PropelEngine implements IDatabaseEngine
     }
 
 
-    public function getClassroomById(int $id): array
+    /**
+     * @param  int  $id
+     *
+     * @return Classroom|null
+     *
+     * Retrieve a single classroom record by its ID
+     */
+    public function getClassroomById(int $id): ?Classroom
     {
-        $query    = new ClassroomQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
-            return [];
-        }
-
-        return $resource->toArray();
+        return ClassroomQuery::create()->findPk($id);
     }
 
 
+    /**
+     * @return Collection
+     *
+     * Fetch all the classroom records
+     */
     public function getClassrooms(): Collection
     {
         return ClassroomQuery::create()->find();
     }
 
-    public function postClassroom(array $body): array
+
+    /**
+     * @param  array  $body
+     *
+     * @return Classroom
+     * @throws PropelException
+     *
+     * Insert a new classroom record
+     */
+    public function postClassroom(array $body): Classroom
     {
-        $resource = new Classroom();
-        $resource->setLabel($body['Label']);
+        $classroom = new Classroom();
+        $classroom->setLabel($body['Label']);
 
         if ($body['Ordering']) {
-            $resource->setOrdering($body['Ordering']);
+            $classroom->setOrdering($body['Ordering']);
 
             // If an "Ordering" value is specified, bump up by one the ordering value for any current classrooms
             // whose current "Ordering" value is the same or higher than that of the new classroom
@@ -102,10 +118,10 @@ class PropelEngine implements IDatabaseEngine
                                         ->orderBy('Ordering', Criteria::DESC)
                                         ->find();
 
-            /** @var Classroom $classroom */
-            foreach ($classrooms as $classroom) {
-                $classroom->setOrdering($classroom->getOrdering() + 1);
-                $classroom->save();
+            /** @var Classroom $c */
+            foreach ($classrooms as $c) {
+                $c->setOrdering($c->getOrdering() + 1);
+                $c->save();
             }
         } else {
             // If no "Ordering" value is specified in the POST request, set the "Ordering" value to one higher than
@@ -119,67 +135,83 @@ class PropelEngine implements IDatabaseEngine
                                       ->orderBy('max_ordering', Criteria::DESC)
                                       ->findOne();
 
-            $resource->setOrdering($maxValue + 1);
+            $classroom->setOrdering($maxValue + 1);
         }
 
-        $resource->setCreatedAt(time());
-        $resource->save();
+        $classroom->setCreatedAt(time());
+        $classroom->save();
 
-        return $resource->toArray();
+        return $classroom;
     }
 
-    public function putClassroomById(int $id, array $body): array
+
+    /**
+     * @param  int  $id
+     * @param  array  $body
+     *
+     * @return ?Classroom
+     * @throws PropelException
+     *
+     * Update a single classroom record, identified by its ID
+     */
+    public function putClassroomById(int $id, array $body): ?Classroom
     {
-        $query    = new ClassroomQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
-            return [];
-        }
+        if ( null !== ($classroom = ClassroomQuery::create()->findPk($id))) {
+            if ($body['Ordering'] > $classroom->getOrdering()) {
+                // New "Ordering" is higher than before; re-order existing classrooms down
+                $classrooms = ClassroomQuery::create()
+                                            ->filterByOrdering(
+                                                ['min' => $classroom->getOrdering() + 1, 'max' => $body['Ordering']]
+                                            )
+                                            ->orderBy('Ordering', Criteria::ASC)
+                                            ->find();
 
-        if ($body['Ordering'] > $resource->getOrdering()) {
-            // New "Ordering" is higher than before; re-order existing classrooms down
-            $classrooms = ClassroomQuery::create()
-                ->filterByOrdering(['min' => $resource->getOrdering() + 1, 'max' => $body[ 'Ordering']])
-                ->orderBy( 'Ordering', Criteria::ASC)
-                ->find();
+                /** @var Classroom $c */
+                foreach ($classrooms as $c) {
+                    $c->setOrdering($c->getOrdering() - 1);
+                    $c->save();
+                }
+            } elseif ($body['Ordering'] < $classroom->getOrdering()) {
+                // New "Ordering" is lower than before; re-order existing classrooms up
+                $classrooms = ClassroomQuery::create()
+                                            ->filterByOrdering(
+                                                ['min' => $body['Ordering'], 'max' => $classroom->getOrdering()]
+                                            )
+                                            ->orderBy('Ordering', Criteria::DESC)
+                                            ->find();
 
-            /** @var Classroom $classroom */
-            foreach ($classrooms as $classroom) {
-                $classroom->setOrdering($classroom->getOrdering() - 1);
-                $classroom->save();
+                /** @var Classroom $c */
+                foreach ($classrooms as $c) {
+                    $c->setOrdering($c->getOrdering() + 1);
+                    $c->save();
+                }
             }
 
-        } elseif ($body['Ordering'] < $resource->getOrdering()) {
-            // New "Ordering" is lower than before; re-order existing classrooms up
-            $classrooms = ClassroomQuery::create()
-                                        ->filterByOrdering(['min' =>$body[ 'Ordering'], 'max' => $resource->getOrdering()])
-                                        ->orderBy( 'Ordering', Criteria::DESC)
-                                        ->find();
-
-            /** @var Classroom $classroom */
-            foreach ($classrooms as $classroom) {
-                $classroom->setOrdering($classroom->getOrdering() + 1);
-                $classroom->save();
-            }
-
+            $classroom->setLabel($body['Label']);
+            $classroom->setOrdering($body['Ordering']);
+            $classroom->setUpdatedAt(time());
+            $classroom->save();
         }
-
-        $resource->setLabel($body['Label']);
-        $resource->setOrdering($body['Ordering']);
-        $resource->setUpdatedAt(time());
-        $resource->save();
-
-        return $resource->toArray();
+        return $classroom;
     }
 
-    public function deleteClassroomById(int $id): int
+
+    /**
+     * @param  int  $id
+     *
+     * @return ?int
+     * @throws PropelException
+     *
+     * Delete a single classroom record, identified by its ID
+     */
+    public function deleteClassroomById(int $id): ?int
     {
-        $query    = new ClassroomQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
-            return 0;
+        if ( null === ( $resource = ClassroomQuery::create()->findPk($id))) {
+            return null;
         }
 
+        // Adjust the "Ordering" value by -1 for all classroom records
+        // whose current "Ordering" value exceeds that of the classroom being deleted
         $classrooms = ClassroomQuery::create()
                                     ->filterByOrdering(['min' => $resource->getOrdering() + 1])
                                     ->orderBy('Ordering', Criteria::DESC)
@@ -190,116 +222,156 @@ class PropelEngine implements IDatabaseEngine
         }
 
         $resource->delete();
-
         return $id;
     }
 
-    public function getStudentById(int $id): ?array
-    {
-        $query    = new StudentQuery();
-        $resource = $query->findPk($id);
 
-        return $resource?->toArray();
+    /**
+     * @param  int  $id
+     *
+     * @return array|null
+     *
+     * Retrieve a single student record by its ID
+     */
+    public function getStudentById(int $id): ?Student
+    {
+        return StudentQuery::create()->findPk($id);
     }
 
+
+    /**
+     * @return Collection
+     *
+     * Fetch all the student records
+     */
     public function getStudents(): Collection
     {
         return StudentQuery::create()->find();
     }
 
 
-    public function postStudent(array $body): array
+    /**
+     * @param  array  $body
+     *
+     * @return Student
+     * @throws PropelException Insert a new student record
+     */
+    public function postStudent(array $body): Student
     {
-        $resource = new Student();
-        $resource->setFamilyName($body['FamilyName']);
-        $resource->setFirstName($body['FirstName']);
-        $resource->setEnrolled($body['Enrolled']);
-        $resource->setClassroomId($body['ClassroomId']);
-        $resource->save();
+        $student = new Student();
+        $student->setFamilyName($body['FamilyName']);
+        $student->setFirstName($body['FirstName']);
+        $student->setEnrolled($body['Enrolled']);
+        $student->setClassroomId($body['ClassroomId']);
+        $student->save();
 
-        return $resource->toArray();
+        return $student;
     }
 
 
-    public function putStudentById(int $id, array $body): ?array
+    /**
+     * @param  int  $id
+     * @param  array  $body
+     *
+     * @return Student|null
+     * @throws PropelException
+     */
+    public function putStudentById(int $id, array $body): ?Student
     {
-        $query    = new StudentQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
-            return null;
+        if ( null !== ($student = StudentQuery::create()->findPk($id))) {
+            $student->setFamilyName($body['FamilyName']);
+            $student->setFirstName($body['FirstName']);
+            $student->setEnrolled($body['Enrolled']);
+            $student->setClassroomId($body['ClassroomId']);
+            $student->save();
         }
-
-        $resource->setFamilyName($body['FamilyName']);
-        $resource->setFirstName($body['FirstName']);
-        $resource->setEnrolled($body['Enrolled']);
-        $resource->setClassroomId($body['ClassroomId']);
-        $resource->save();
-
-        return $resource->toArray();
+        return $student;
     }
 
+
+    /**
+     * @param  int  $id
+     *
+     * @return int|null
+     * @throws PropelException
+     */
     public function deleteStudentById(int $id): ?int
     {
-        $query    = new StudentQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
+        if ( null === ($student = StudentQuery::create()->findPk($id))) {
             return null;
         }
-        $resource->delete();
 
+        $student->delete();
         return $id;
     }
 
-    public function getScheduleById(int $id): ?array
+    /**
+     * @param  int  $id
+     *
+     * @return Schedule|null
+     */
+    public function getScheduleById(int $id): ?Schedule
     {
-        $query    = new ScheduleQuery();
-        $resource = $query->findPk($id);
-
-        return $resource?->toArray();
+        return ScheduleQuery::create()->findPk($id);
     }
 
+    /**
+     * @return Collection
+     */
     public function getSchedules(): Collection
     {
         return ScheduleQuery::create()->find();
     }
 
-    public function postSchedule(array $body): array
+    /**
+     * @param  array  $body
+     *
+     * @return Schedule
+     * @throws PropelException
+     */
+    public function postSchedule(array $body): Schedule
     {
-        $resource = new Schedule();
-        $resource->setStartDate($body['StartDate']);
-        $resource->setSchedule($body['Schedule']);
-        $resource->setStudentId($body['StudentId']);
-        $resource->save();
+        $schedule = new Schedule();
+        $schedule->setStartDate($body['StartDate']);
+        $schedule->setSchedule($body['Schedule']);
+        $schedule->setStudentId($body['StudentId']);
+        $schedule->save();
 
-        return $resource->toArray();
+        return $schedule;
     }
 
-    public function putScheduleById(int $id, array $body): ?array
+    /**
+     * @param  int  $id
+     * @param  array  $body
+     *
+     * @return Schedule|null
+     * @throws PropelException
+     */
+    public function putScheduleById(int $id, array $body): ?Schedule
     {
-        $query    = new ScheduleQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
-            return null;
+        if ( null !== ($schedule = ScheduleQuery::create()->findPk($id))) {
+            $schedule->setStartDate($body['StartDate']);
+            $schedule->setSchedule($body['Schedule']);
+            $schedule->setStudentId($body['StudentId']);
+            $schedule->save();
         }
 
-        $resource->setStartDate($body['StartDate']);
-        $resource->setSchedule($body['Schedule']);
-        $resource->setStudentId($body['StudentId']);
-        $resource->save();
-
-        return $resource->toArray();
+        return $schedule;
     }
 
 
+    /**
+     * @param  int  $id
+     *
+     * @return int|null
+     * @throws PropelException
+     */
     public function deleteScheduleById(int $id): ?int
     {
-        $query    = new ScheduleQuery();
-        $resource = $query->findPk($id);
-        if (null === $resource) {
+        if ( null === ($schedule = ScheduleQuery::create()->findPk($id))) {
             return null;
         }
-        $resource->delete();
-
+        $schedule->delete();
         return $id;
     }
 }

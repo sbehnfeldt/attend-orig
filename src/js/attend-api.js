@@ -55,7 +55,8 @@ let AttendApi = (function () {
                 if (!response.ok) {
                     throw new Error(`HTTP error status: ${response.status}`)
                 }
-                return;
+                let json = await response.json();
+                return json.data;
             }
         }
     }

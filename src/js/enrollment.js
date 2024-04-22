@@ -281,192 +281,85 @@ let StudentPropsDlg = (function (selector) {
         return valid;
     }
 
-    function submit() {
-        let id,
-            student,
-            map;
+    async function submit() {
+        let student, schedule;
 
-        id      = $studentId.val();
         student = {
-            "FamilyName": $familyName.val(),
-            "FirstName": $firstName.val(),
-            "Enrolled": (true === $enrolled.prop('checked')) ? 1 : 0,
-            "ClassroomId": $classrooms.val() ? $classrooms.val() : null
+            Id: '' === $studentId.val() ? null : $studentId.val(),
+            FamilyName: $familyName.val(),
+            FirstName: $firstName.val(),
+            Enrolled: (true === $enrolled.prop('checked')) ? 1 : 0,
+            ClassroomId: $classrooms.val() ? $classrooms.val() : null
         };
 
-        map = 0;
+        schedule = 0;
         $boxes.each(function (i, e) {
             if ($(e).prop('checked')) {
-                map += parseInt($(e).val(), 16);
+                schedule += parseInt($(e).val(), 16);
             }
         });
 
-        if (!id) {
-            // Insert new student and schedule
-            insert(student, {
-                StartDate: $startDate.val(),
-                Schedule: map
-            });
+        Attend.loadAnother();
+        try {
+            if (!$studentId.val()) {
+                // New student: insert student, then insert schedule (need to wait for ID of new student before inserting schedule)
+                student = await AttendApi.students.insert(student);
+                await AttendApi.schedules.insert({
+                    StudentId: student.Id,
+                    Schedule: schedule,
+                    StartDate: moment()
+                });
 
-        } else {
-            let idx = $list.prop('selectedIndex');
-            // let cur = Schedules.records[id][idx];
+            } else {
+                // Current student: update student (if necessary) and schedule (if necessary) in parallel
+                let idx = $list.prop('selectedIndex');
+                await AttendApi.students.update(student);
 
-            // console.log(cur);
-            // if (cur.schedule == map) {
-            // Update student, leave schedule unchanged
-            // update(id, student, null);
-            // } else {
-            // Update student, add new schedule
-            // update(id, student, {
-            //     StartDate: $startDate.val(),
-            //     Schedule: map
-            // });
-            // }
+                if ( !idx ) {
+                    console.log( "Inserting schedule" );
+                    let r = await AttendApi.schedules.insert({
+                        StudentId: student.Id,
+                        Schedule: schedule,
+                        StartDate: moment()
+                    });
+                    console.log(r);
+                } else {
+                    // let sched = this.value;
+                    let temp = $list.val();
+                    console.log(temp);
+
+                    // let cur = Schedules.records[id][idx];
+
+                    // console.log(cur);
+                    // if (cur.schedule == map) {
+                    // Update student, leave schedule unchanged
+                    // update(id, student, null);
+                    // } else {
+                    // Update student, add new schedule
+                    // update(id, student, {
+                    //     StartDate: $startDate.val(),
+                    //     Schedule: map
+                    // });
+                    // }
+
+                }
+            }
+
+            await EnrollmentTab.load();
+            EnrollmentTab.populate();
+
+        } catch (e) {
+            console.log(e);
+            alert("Unable to complete operation");
+        } finally {
+            Attend.doneLoading();
         }
+
+
+
         StudentPropsDlg.close();
     }
 
-
-    // Insert new student, new schedule
-    function insert(student, schedule) {
-        Attend.loadAnother();
-        $.ajax({
-            "url": "api/students",
-            "method": "post",
-            "data": student,
-
-            "dataType": "json",
-            "success": function (json) {
-                console.log(json);
-                Attend.loadAnother();
-                $.ajax({
-                    'url': 'api/students/' + json.Id,
-                    'method': 'get',
-                    'success': function (json) {
-                        console.log(json);
-                        EnrollmentTab.insert(json);
-                        Attend.loadAnother();   // Get student record just loaded
-                        schedule.StudentId = json.Id;
-                        $.ajax({
-                            "url": "api/schedules",
-                            "method": "post",
-                            "data": schedule,
-
-                            "dataType": "json",
-                            "success": function (json) {
-                                $.ajax({
-                                    'url': 'api/schedules/' + json.Id,
-                                    'method': 'get',
-                                    'success': function (json) {
-                                        console.log(json);
-                                        // Schedules.insert(json);
-                                        Attend.doneLoading();
-                                    },
-                                    'error': function (xhr) {
-                                        console.log(xhr);
-                                        Attend.doneLoading();
-                                    }
-                                })
-                            },
-                            "error": function (xhr) {
-                                console.log(xhr);
-                                Attend.doneLoading();
-                                alert("Error");
-                            }
-                        });
-                        Attend.doneLoading();
-                    },
-
-                    'error': function (xhr) {
-                        console.log(xhr);
-                        Attend.doneLoading();
-                    }
-                });
-
-                Attend.doneLoading();
-            },
-            "error": function (xhr) {
-                console.log(xhr);
-                Attend.doneLoading();
-                alert("Error");
-            }
-        });
-    }
-
-    function update(id, student, schedule) {
-        Attend.loadAnother();
-        $.ajax({
-            "url": "api/students/" + id,
-            "method": "put",
-            "data": student,
-
-            "success": function (json) {
-                student.Id = id;
-
-                EnrollmentTab.redrawRow(student);
-                if (schedule) {
-                    schedule.StudentId = id;
-
-                    let d1 = $startDate.val();
-                    // for (let i = 0; i < Schedules.records[id].length; i++) {
-                    //     if (d1 === Schedules.records[id][i].StartDate.split('T')[0]) {
-                    //         break;
-                    //     }
-                    // }
-                    // if (i < Schedules.records[id].length) {
-                    //     // Update existing schedule
-                    //     schedule.Id = Schedules.records[id][i].Id;
-                    //     Attend.loadAnother();
-                    //     $.ajax({
-                    //         "url": "api/schedules/" + schedule.Id,
-                    //         "method": "put",
-                    //         "data": schedule,
-                    //
-                    //         "dataType": "json",
-                    //         "success": function (json) {
-                    //             console.log(json);
-                    //             Schedules.update(schedule);
-                    //             Attend.doneLoading();
-                    //         },
-                    //         "error": function (xhr) {
-                    //             console.log(xhr);
-                    //             Attend.doneLoading();
-                    //         }
-                    //     });
-                    // } else {
-                    //     // Insert new schedule
-                    //     Attend.loadAnother();
-                    //     $.ajax({
-                    //         "url": "api/schedules",
-                    //         "method": "post",
-                    //         "data": schedule,
-                    //
-                    //         "dataType": "json",
-                    //         "success": function (json) {
-                    //             console.log(json);
-                    //             schedule.Id = json.Id;
-                    //             Schedules.insert(schedule);
-                    //             Attend.doneLoading();
-                    //         },
-                    //         "error": function (xhr) {
-                    //             console.log(xhr);
-                    //             Attend.doneLoading();
-                    //         }
-                    //     });
-                    // }
-                }
-                Attend.doneLoading();
-            },
-            "error": function (xhr, estring, e) {
-                console.log(xhr);
-                console.log(estring);
-                console.log(e);
-                Attend.doneLoading();
-                alert("Error");
-            }
-        });
-    }
 
 
     return {clear, populate, open, close};
