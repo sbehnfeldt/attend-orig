@@ -219,17 +219,7 @@ class ClassroomTableMap extends TableMap
     0 => ':classroom_id',
     1 => ':id',
   ),
-), 'SET NULL', null, 'Students', false);
-    }
-
-    /**
-     * Method to invalidate the instance pool of all tables related to classrooms     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool(): void
-    {
-        // Invalidate objects in related instance pools,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        StudentTableMap::clearInstancePool();
+), 'RESTRICT', null, 'Students', false);
     }
 
     /**

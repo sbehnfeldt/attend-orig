@@ -220,7 +220,7 @@ class ScheduleTableMap extends TableMap
     0 => ':student_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
     }
 
     /**

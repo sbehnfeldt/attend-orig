@@ -41,6 +41,7 @@ CREATE TABLE `schedules`
     CONSTRAINT `schedules_students_FK`
         FOREIGN KEY (`student_id`)
         REFERENCES `students` (`id`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB COMMENT='Table indicating when students are scheduled to attend';
 
 -- ---------------------------------------------------------------------
@@ -61,7 +62,7 @@ CREATE TABLE `students`
     CONSTRAINT `students_ibfk_1`
         FOREIGN KEY (`classroom_id`)
         REFERENCES `classrooms` (`id`)
-        ON DELETE SET NULL
+        ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier

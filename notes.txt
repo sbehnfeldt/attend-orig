@@ -4,11 +4,11 @@ vendor\bin\propel reverse --schema-name=attend --database-name=attend --namespac
 ; TODO: Correct value of namespace attributes in database and table elements, as necessary
 
 ; Generate the schema map from schema xml
-cls && vendor\bin\propel sql:build --config-dir=generated-reversed-database --schema-dir=generated-reversed-database --output-dir=generated-reversed-database --overwrite
+cls && vendor\bin\propel sql:build --config-dir=propel --schema-dir=propel --output-dir=propel --overwrite
 
 
 cls && vendor\bin\propel help model:build
-cls && vendor\bin\propel model:build --config-dir=generated-reversed-database --schema-dir=generated-reversed-database --output-dir=classes/Attend/Database
+cls && vendor\bin\propel model:build --config-dir=propel --schema-dir=propel --output-dir=classes/flapjack/attend/database
 
 
 cls && vendor\bin\propel help convert

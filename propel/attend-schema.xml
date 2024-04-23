@@ -25,7 +25,7 @@
         <column name="schedule" phpName="Schedule" type="INTEGER" required="true" defaultValue="0"/>
         <column name="start_date" phpName="StartDate" type="DATE" required="true"/>
         <column name="entered_at" phpName="EnteredAt" type="INTEGER" required="true" defaultValue="0"/>
-        <foreign-key foreignTable="students" name="schedules_students_FK">
+        <foreign-key foreignTable="students" name="schedules_students_FK" onDelete="cascade" onUpdate="none" >
             <reference local="student_id" foreign="id"/>
         </foreign-key>
         <index name="fk_student_idx">
@@ -48,7 +48,7 @@
         <column name="first_name" phpName="FirstName" type="VARCHAR" size="45" required="true"/>
         <column name="enrolled" phpName="Enrolled" type="BOOLEAN" size="1" required="true"/>
         <column name="classroom_id" phpName="ClassroomId" type="INTEGER" required="false"/>
-        <foreign-key foreignTable="classrooms" name="students_ibfk_1" onDelete="setnull">
+        <foreign-key foreignTable="classrooms" name="students_ibfk_1" onDelete="restrict" onUpdate="none">
             <reference local="classroom_id" foreign="id"/>
         </foreign-key>
         <index name="classroom_id">
