@@ -251,36 +251,41 @@ class AttendPdf extends Fpdf
         return $composite;
     }
 
+    /**
+     * @return void
+     *
+     * Convert classrooms, students and schedules from flat records (from the DB) into nested arrays,
+     * suitable for generating the attendance sheets.
+     */
     protected function prepare()
     {
         $this->classes = [];
         $classes       = $this->getEngine()->getClassrooms();
-        for ($i = 0; $i < count($classes); $i++) {
-            $class                           = $classes[ $i ];
-            $class[ 'students' ]             = [];
-            $this->classes[ $class[ 'Id' ] ] = $class;
+        foreach ($classes->getIterator() as $itr) {
+            $class                       = $itr->toArray();
+            $class['students']           = [];
+            $this->classes[$class['Id']] = $class;
         }
 
         $this->students = [];
         $students       = $this->getEngine()->getStudents();
-        for ($i = 0; $i < count($students); $i++) {
-            $student                            = $students[ $i ];
-            $student[ 'schedules' ]             = [];
-            $this->students[ $student[ 'Id' ] ] = $student;
+        foreach ($students->getIterator() as $itr) {
+            $student                        = $itr->toArray();
+            $student['schedules']           = [];
+            $this->students[$student['Id']] = $student;
 
-            $classroomId                                   = $student[ 'ClassroomId' ];
-            $this->classes[ $classroomId ][ 'students' ][] = $student[ 'Id' ];
+            $classroomId                               = $student['ClassroomId'];
+            $this->classes[$classroomId]['students'][] = $student['Id'];
         }
-
 
         $this->schedules = [];
         $schedules       = $this->getEngine()->getSchedules();
-        for ($i = 0; $i < count($schedules); $i++) {
-            $schedule                             = $schedules[ $i ];
-            $this->schedules[ $schedule[ 'Id' ] ] = $schedule;
+        foreach ($schedules->getIterator() as $itr) {
+            $schedule                         = $itr->toArray();
+            $this->schedules[$schedule['Id']] = $schedule;
 
-            $studentId                                     = $schedule[ 'StudentId' ];
-            $this->students[ $studentId ][ 'schedules' ][] = $schedule[ 'Id' ];
+            $studentId                                 = $schedule['StudentId'];
+            $this->students[$studentId]['schedules'][] = $schedule['Id'];
         }
 
         return;
