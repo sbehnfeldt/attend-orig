@@ -14,3 +14,5 @@ public/info.php
 /propel/propel.json
 /public/js/enrollment.bundle.js
 /public/js/attendance.bundle.js
+/public/js/index.bundle.js
+/generated-conf/

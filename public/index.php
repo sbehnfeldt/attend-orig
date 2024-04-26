@@ -74,23 +74,20 @@ $app->get('/', function (ServerRequestInterface $request, ResponseInterface $res
         'cache' => false
     ));
 
-    // Get the text version of the date, suitable for column header
-    $twig->addFunction(
-        new TwigFunction('getDate', function (\DateTime $weekOf, int $d) {
-            $w = new \DateTime($weekOf->format('Y/m/d'));
-            $w->add(new \DateInterval(sprintf('P%dD', $d)));
-
-            return $w->format('M j');
-        })
-    );
+//    // Get the text version of the date, suitable for column header
+//    $twig->addFunction(
+//        new TwigFunction('getDate', function (\DateTime $weekOf, int $d) {
+//            $w = new \DateTime($weekOf->format('Y/m/d'));
+//            $w->add(new \DateInterval(sprintf('P%dD', $d)));
+//
+//            return $w->format('M j');
+//        })
+//    );
 
     $weekOf = new \DateTime('now');
     $weekOf = getMonday($weekOf);
     $response->getBody()->write(
-        $twig->render('attendance.html.twig', [
-            'classrooms' => ClassroomQuery::create()->find(),
-            'weekOf'     => $weekOf
-        ])
+        $twig->render('index.html.twig', [])
     );
 
     return $response;

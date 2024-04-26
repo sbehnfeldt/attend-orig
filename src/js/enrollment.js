@@ -78,10 +78,10 @@ let EnrollmentTab = (function (selector) {
 
                     // Update each object in the "students" array with the corresponding classroom and schedule data.
                     // This will eliminate the need to search through the classrooms and schedules arrays later on.
-                    students.forEach((elem, idx, arr) => {
-                        elem['Classroom'] = classrooms.find((e) => e.Id === elem.ClassroomId);
-                        elem['Schedules'] = schedules
-                            .filter((e) => e.StudentId === elem.Id)
+                    students.forEach((student, idx, arr) => {
+                        student['Classroom'] = classrooms.find((classroom) => classroom.Id === student.ClassroomId);
+                        student['Schedules'] = schedules
+                            .filter((e) => e.StudentId === student.Id)
                             .sort((a, b) => {
                                 if (moment(a.StartDate) < moment(b.StartDate)) {
                                     return 1;

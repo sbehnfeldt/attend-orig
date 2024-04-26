@@ -148,3 +148,10 @@ form div.options div.col-md-3 {
 #tabs {
     display: none;
 }
+
+.widget {
+    background-color: rgba(137, 210, 245, .5);
+    box-shadow: #c2deea 5px 5px;
+    padding: 2rem;
+    border-radius: 15px;
+}
