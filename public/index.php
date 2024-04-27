@@ -74,18 +74,6 @@ $app->get('/', function (ServerRequestInterface $request, ResponseInterface $res
         'cache' => false
     ));
 
-//    // Get the text version of the date, suitable for column header
-//    $twig->addFunction(
-//        new TwigFunction('getDate', function (\DateTime $weekOf, int $d) {
-//            $w = new \DateTime($weekOf->format('Y/m/d'));
-//            $w->add(new \DateInterval(sprintf('P%dD', $d)));
-//
-//            return $w->format('M j');
-//        })
-//    );
-
-    $weekOf = new \DateTime('now');
-    $weekOf = getMonday($weekOf);
     $response->getBody()->write(
         $twig->render('index.html.twig', [])
     );
@@ -284,7 +272,7 @@ $app->delete('/api/students/{id}',
         }
 
         $response = $response
-            ->withStatus(204, 'No Content')
+            ->withStatus(200, 'OK')
             ->withHeader('Content-Type', 'application/json');
         $response->getBody()->write( json_encode( ['data' => [ 'id' => $id ]]));
 
