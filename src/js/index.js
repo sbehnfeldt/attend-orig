@@ -24,7 +24,7 @@ let SummaryWidget = (function (selector) {
         columns: [{
             data: null,
             render: (data) => {
-                return `${data.Label} (${data[ 'Students' ].length})`;
+                return `${data.Label} (${data['Students'].length})`;
             }
         }, {
             data: "Summary",
@@ -57,12 +57,12 @@ let SummaryWidget = (function (selector) {
                     classrooms.forEach((classroom, idx, arr) => {
 
                         // Sort the students into their classrooms
-                        classroom[ 'Students' ] = students.filter((student) => student.Enrolled && (classroom.Id === student.ClassroomId) );
+                        classroom['Students'] = students.filter((student) => student.Enrolled && (classroom.Id === student.ClassroomId));
 
 
                         // Identify, sort and assign each student's schedules
-                        classroom[ 'Students' ].forEach((student, idx1, arr1) => {
-                            student[ 'Schedules' ] = schedules
+                        classroom['Students'].forEach((student, idx1, arr1) => {
+                            student['Schedules'] = schedules
                                 .filter((schedule) => schedule.StudentId === student.Id)
                                 .sort((a, b) => {
                                     if (moment(a.StartDate) < moment(b.StartDate)) {
@@ -75,24 +75,24 @@ let SummaryWidget = (function (selector) {
                         });
 
                         // Summarize schedules
-                        classroom[ 'Summary' ] = [0, 0, 0, 0, 0];
-                        classroom[ 'Students' ].forEach((student) => {
-                            let sched = student['Schedules'][0]['Schedule'];
+                        classroom['Summary'] = [0, 0, 0, 0, 0];   // # of students attending each day of the week
+                        classroom['Students'].forEach((student) => {
+                            let sched   = student['Schedules'][0]['Schedule'];
                             let summary = classroom['Summary'];
 
+                            // Check which (if any) days of the week the student is attending
                             for (let i = 0; i < 5; i++) {
-                                // Calculate the bit value for the current index (2^i)
-                                let bitValue = 1 << i;
-
-                                // Check if the bit is set in the sched variable
-                                if (sched & bitValue) {
+                                let bitValue = 1 << i;                    // Calculate the bit value for the current index (2^i)
+                                if (sched & bitValue) {                   // Check if the AM bit is set for this student for this day
+                                    summary[i]++;
+                                } else if (sched & (bitValue * 0x20)) {   // Check if the lunch bit is set
+                                    summary[i]++;
+                                } else if (sched & (bitValue * 0x400)) {   // Check the PM bit
                                     summary[i]++;
                                 }
                             }
                         });
                     });
-
-                    console.log( classrooms );
 
                     Attend.doneLoading();
                 })
@@ -109,8 +109,8 @@ let SummaryWidget = (function (selector) {
 
     function populate() {
         table.clear();
-        for ( let i = 0; i < classrooms.length; i++ ) {
-            table.row.add( classrooms[i]);
+        for (let i = 0; i < classrooms.length; i++) {
+            table.row.add(classrooms[i]);
         }
         table.draw();
         return this;
