@@ -306,8 +306,10 @@ $app->get('/api/schedules',
         return $response;
     });
 
+// Insert new schedule
 $app->post('/api/schedules',
     function (ServerRequestInterface $request, ResponseInterface $response, array $args) use ($engine) {
+    try {
         $schedule = $engine->postSchedule($request->getParsedBody());
         if (null === $schedule) {
             return $response->withStatus(404, 'Not Found');
@@ -317,6 +319,12 @@ $app->post('/api/schedules',
             ->withStatus(201, 'Created')
             ->withHeader('Content-Type', 'application/json');
         $response->getBody()->write(json_encode(['data' => $schedule->toArray()]));
+    } catch (\Exception $e) {
+        $response = $response
+            ->withStatus(500, 'Internal Service Error')
+            ->withHeader('Content-Type', 'application/json');
+        $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+    }
 
         return $response;
     });

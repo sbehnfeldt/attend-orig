@@ -249,6 +249,7 @@ let StudentPropsDlg = (function (selector) {
         return this;
     }
 
+    // Fill in the Student Properties form
     function populate(student) {
 
         $studentId.val(student.Id);
@@ -258,10 +259,14 @@ let StudentPropsDlg = (function (selector) {
         $enrolled.prop('checked', (1 == student.Enrolled));
         $startDate.datepicker('setDate', Attend.getMonday(new Date()));
 
+        // Populate the drop-down list of the student's (previously-defined) schedules
         $list.removeClass('hidden');
         for (let i = 0; i < student.Schedules.length; i++) {
             let sched = student.Schedules[i];
-            let $opt  = $('<option>').text(sched.StartDate.split('T')[0]).val(sched.Schedule);
+            let $opt  = $('<option>')
+                .text(sched.StartDate.split('T')[0])
+                .val(sched.Schedule)
+                .data('id', sched[ 'Id' ])
             $list.append($opt);
         }
         $list.trigger('change');
@@ -284,6 +289,7 @@ let StudentPropsDlg = (function (selector) {
     async function submit() {
         let student, schedule;
 
+        // Student data (from the form)
         student = {
             Id: '' === $studentId.val() ? null : $studentId.val(),
             FamilyName: $familyName.val(),
@@ -292,6 +298,7 @@ let StudentPropsDlg = (function (selector) {
             ClassroomId: $classrooms.val() ? $classrooms.val() : null
         };
 
+        // Schedule data (from the form)
         schedule = 0;
         $boxes.each(function (i, e) {
             if ($(e).prop('checked')) {
@@ -314,14 +321,29 @@ let StudentPropsDlg = (function (selector) {
                 // Current student: update student and schedule (if necessary)
                 student = await AttendApi.students.update(student);
 
-                let cur = $list.val();
-                console.log(cur, schedule);
-                if (cur !== schedule) {
-                    await AttendApi.schedules.insert({
-                        StudentId: student.Id,
-                        Schedule: schedule,
-                        StartDate: moment()
-                    });
+                let cur = $list.find('option:eq(0)').val();
+
+                // See if new schedule is different from the current schedule
+                if (parseInt(cur) !== schedule) {
+                    // Inserting a new schedule
+
+                    let now = moment();
+
+                    if ( now.format('Y-MM-DD') !== $list.find('option:eq(0)').text()) {
+
+                        await AttendApi.schedules.insert({
+                            StudentId: student.Id,
+                            Schedule: schedule,
+                            StartDate: moment()
+                        });
+                    } else {
+                        await AttendApi.schedules.update({
+                            Id: $list.find('option:eq(0)').data('id'),
+                            StudentId: student.Id,
+                            Schedule: schedule,
+                            StartDate: moment()
+                        });
+                    }
                 }
             }
 
