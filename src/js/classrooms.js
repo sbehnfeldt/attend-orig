@@ -17,15 +17,12 @@ let ClassroomsTab = (function (selector) {
     table = new DataTable(selector, {
         data: classrooms,
         layout: {
-            top1Start: 'info',
-            topStart: "pageLength",
-            topEnd: 'search',
             bottomStart: 'buttons',
-            bottomEnd: 'paging'
         },
         autoWidth: false,
         paging: false,
         searching: false,
+        info: false,
         select: "single",
         order: [[2, "asc"]],
         columns: [
