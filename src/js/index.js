@@ -50,9 +50,14 @@ let SummaryWidget = (function (selector) {
         try {
             return Promise.all([AttendApi.classrooms.select(), AttendApi.students.select(), AttendApi.schedules.select()])
                 .then((values) => {
-                    classrooms = values[0];
+                    classrooms = values[0].sort((a, b) => {
+                        if ( a.Ordering < b.Ordering ) return -1;
+                        if ( a.Ordering > b.Ordering ) return 1;
+                        return 0;
+                    });
                     students   = values[1];
                     schedules  = values[2];
+
 
                     classrooms.forEach((classroom, idx, arr) => {
 

@@ -38,7 +38,7 @@
             </header>
 
             <section class="attendance-page-schedules">
-                {% for classroom in classrooms %}
+                {% for classroom in classrooms|sort((a, b) => a.Ordering <=> b.ordering) %}
                     <h3>{{ classroom.label }}</h3>
 
                     <table class="attendance-table table table-striped table-bordered" style="width: 100%">
