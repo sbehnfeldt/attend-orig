@@ -43,29 +43,30 @@
 
                     <table class="attendance-table table table-striped table-bordered" style="width: 100%">
                         <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Mon<br/>{{ getDate(weekOf, 0) }}</th>
-                            <th>Tue<br/>{{ getDate(weekOf, 1) }}</th>
-                            <th>Wed<br/>{{ getDate(weekOf, 2) }}</th>
-                            <th>Thu<br/>{{ getDate(weekOf, 3) }}</th>
-                            <th>Fri<br/>{{ getDate(weekOf, 4) }}</th>
-                            <th>Summary</th>
-                        </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Mon<br/>{{ getDate(weekOf, 0) }}</th>
+                                <th>Tue<br/>{{ getDate(weekOf, 1) }}</th>
+                                <th>Wed<br/>{{ getDate(weekOf, 2) }}</th>
+                                <th>Thu<br/>{{ getDate(weekOf, 3) }}</th>
+                                <th>Fri<br/>{{ getDate(weekOf, 4) }}</th>
+                                <th>Summary</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for student in classroom.getStudents %}
-                            {% set notes = {'FD' : 0, 'HD' : 0, 'HDL' : 0 } %}
-                            <tr>
-                                <td>{{ student.getFamilyName }}, {{ student.getFirstName }}</td>
-                                <td>{{ student.writeSchedule( weekOf, 0 ) }}</td>
-                                <td>{{ student.writeSchedule( weekOf, 1 ) }}</td>
-                                <td>{{ student.writeSchedule( weekOf, 2 ) }}</td>
-                                <td>{{ student.writeSchedule( weekOf, 3 ) }}</td>
-                                <td>{{ student.writeSchedule( weekOf, 4 ) }}</td>
-                                <td>{{ student.writeSummary }}</td>
-
-                            </tr>
+                        {% for student in classroom.getStudents|sort((a,b) => a.FamilyName <=> b.FamilyName) %}
+                            {% if student.Enrolled %}
+                                {% set notes = {'FD' : 0, 'HD' : 0, 'HDL' : 0 } %}
+                                <tr>
+                                    <td>{{ student.getFamilyName }}, {{ student.getFirstName }}</td>
+                                    <td>{{ student.writeSchedule( weekOf, 0 ) }}</td>
+                                    <td>{{ student.writeSchedule( weekOf, 1 ) }}</td>
+                                    <td>{{ student.writeSchedule( weekOf, 2 ) }}</td>
+                                    <td>{{ student.writeSchedule( weekOf, 3 ) }}</td>
+                                    <td>{{ student.writeSchedule( weekOf, 4 ) }}</td>
+                                    <td>{{ student.writeSummary }}</td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
 
                         </tbody>
@@ -85,14 +86,14 @@
                         Week Of: <input type="text" name="week-of" value="{{ weekOf.format( 'm/d/Y') }}"/>
                         <div class="options row">
                             <div class="col-xs-12 col-xs-3">
-                            <div>Print Options</div>
-                            <div>Dark Days</div>
-                            <div><input type="checkbox" name="dark[]" value="0"> Monday</div>
-                            <div><input type="checkbox" name="dark[]" value="1"> Tuesday</div>
-                            <div><input type="checkbox" name="dark[]" value="2"> Wednesday</div>
-                            <div><input type="checkbox" name="dark[]" value="3"> Thursday</div>
-                            <div><input type="checkbox" name="dark[]" value="4"> Friday</div>
-                        </div>
+                                <div>Print Options</div>
+                                <div>Dark Days</div>
+                                <div><input type="checkbox" name="dark[]" value="0"> Monday</div>
+                                <div><input type="checkbox" name="dark[]" value="1"> Tuesday</div>
+                                <div><input type="checkbox" name="dark[]" value="2"> Wednesday</div>
+                                <div><input type="checkbox" name="dark[]" value="3"> Thursday</div>
+                                <div><input type="checkbox" name="dark[]" value="4"> Friday</div>
+                            </div>
                         </div>
                         <div>
                             <button name="pdf">PDF</button>
@@ -103,31 +104,34 @@
             </header>
 
             <section class="attendance-page-signin">
-                {% for classroom in classrooms %}
+                {% for classroom in classrooms|sort((a, b) => a.Ordering <=> b.ordering) %}
                     <h3>{{ classroom.label }}</h3>
 
                     <table class="signin-table table table-striped table-bordered">
                         <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Mon<br/>{{ getDate(weekOf, 0) }}</th>
-                            <th>Tue<br/>{{ getDate(weekOf, 1) }}</th>
-                            <th>Wed<br/>{{ getDate(weekOf, 2) }}</th>
-                            <th>Thu<br/>{{ getDate(weekOf, 3) }}</th>
-                            <th>Fri<br/>{{ getDate(weekOf, 4) }}</th>
-                        </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Mon<br/>{{ getDate(weekOf, 0) }}</th>
+                                <th>Tue<br/>{{ getDate(weekOf, 1) }}</th>
+                                <th>Wed<br/>{{ getDate(weekOf, 2) }}</th>
+                                <th>Thu<br/>{{ getDate(weekOf, 3) }}</th>
+                                <th>Fri<br/>{{ getDate(weekOf, 4) }}</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for student in classroom.getStudents %}
-                            {% set notes = {'FD' : 0, 'HD' : 0, 'HDL' : 0 } %}
-                            <tr>
-                                <td>{{ student.getFamilyName }}, {{ student.getFirstName }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                        {% for student in classroom.getStudents|sort((a,b) => a.FamilyName <=> b.FamilyName) %}
+                            {% if student.Enrolled %}
+
+                                {% set notes = {'FD' : 0, 'HD' : 0, 'HDL' : 0 } %}
+                                <tr>
+                                    <td>{{ student.getFamilyName }}, {{ student.getFirstName }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>
